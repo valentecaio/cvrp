@@ -7,7 +7,7 @@ class Point:
     return "{x: %s, y: %s}" % (self.x, self.y)
 
   def distance_to_point(self, p):
-    return int( ((self.x - p.x)**2 + (self.y - p.x))**.5 )
+    return int( ( (self.x - p.x)**2 + (self.y - p.y)**2 )**.5 )
 
 
 class Client:

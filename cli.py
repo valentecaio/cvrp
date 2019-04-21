@@ -19,16 +19,16 @@ def parse_vrp(filepath):
   # extract client data from read strings
   number_of_clients = len(demands_section)
   clients = []
-  for i in range(0, number_of_clients):
+  for i in range(1, number_of_clients):
     # parse client data
-    client_id, x, y = node_coord_section[i].strip().split(" ")
+    x, y = node_coord_section[i].strip().split(" ")[1:]
     demand = demands_section[i].strip().split(" ")[-1]
     # create client and add to clients list
-    clients.append(Client(client_id, demand, x, y))
+    clients.append(Client(i-1, demand, x, y))
 
-  # clients[1] is NOT a client: this is the depot
-  depot = clients.pop(0)
-  depot = Point(depot._pos._x, depot._pos._y)
+  # the first "client" of the list is NOT a client: this is the depot
+  x, y = node_coord_section[0].strip().split(" ")[1:]
+  depot = Point(x, y)
 
   # extract capacity data from file
   capacity = extract_section(s, "CAPACITY :", "NODE_COORD_SECTION").strip()

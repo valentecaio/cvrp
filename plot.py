@@ -12,7 +12,7 @@ def draw_initial_state(depot, clients):
   plt.scatter(x_list, y_list, s=10)
 
   # draw depot
-  plt.scatter(depot._x, depot._y, s=10)
+  plt.scatter(depot.x, depot.y, s=10)
 
   # Set chart title.
   plt.title("Initial state", fontsize=19)

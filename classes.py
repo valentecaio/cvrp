@@ -1,22 +1,22 @@
 class Point:
   def __init__(self, x, y):
-    self._x = int(x)
-    self._y = int(y)
+    self.x = int(x)
+    self.y = int(y)
 
   def __repr__(self):
-    return "{x: %s, y: %s}" % (self._x, self._y)
+    return "{x: %s, y: %s}" % (self.x, self.y)
 
   def distance_to_point(self, p):
-    return int( ((self._x - p.x)**2 + (self._y - p.x))**.5 )
+    return int( ((self.x - p.x)**2 + (self.y - p.x))**.5 )
 
 
 class Client:
   def __init__(self, id, demand, x, y):
-    self._id = id
-    self._demand = demand
-    self._pos = Point(x, y)
+    self.id = id
+    self.demand = demand
+    self.pos = Point(x, y)
 
   def __repr__(self):
     return "(client %s - demand: %s, position: %s)"\
-          % (self._id, self._demand, self._pos)
+          % (self.id, self.demand, self.pos)
 

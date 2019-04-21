@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Draw client points based on their x, y axis values
 def draw_initial_state(depot, clients):
@@ -16,5 +17,9 @@ def draw_initial_state(depot, clients):
   # Set chart title.
   plt.title("Initial state", fontsize=19)
   
-  # Display the plot in the matplotlib's viewer
+  # save plot result as png in ./results/
+  filename = 'results/' + str(datetime.now()).replace(' ', '_') + '.png'
+  plt.savefig(filename, bbox_inches='tight')
+
+  # display the plot in the matplotlib's viewer
   plt.show()

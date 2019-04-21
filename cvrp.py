@@ -14,6 +14,7 @@ def main():
   print("clients:")
   pprint(clients)
   plot.draw_initial_state(depot, clients)
+  # plot.save_output()
 
 
 if __name__ == "__main__":

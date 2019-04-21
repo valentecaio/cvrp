@@ -1,7 +1,7 @@
 class Point:
   def __init__(self, x, y):
-    self._x = x
-    self._y = y
+    self._x = int(x)
+    self._y = int(y)
 
   def __repr__(self):
     return "{x: %s, y: %s}" % (self._x, self._y)

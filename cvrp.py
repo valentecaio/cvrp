@@ -3,6 +3,7 @@
 from pprint import pprint
 from classes import Client
 from cli import parse_args, parse_vrp
+import plot
 
 def main():
   algorithm, filepath, verbose, cli_capacity = parse_args()
@@ -12,6 +13,7 @@ def main():
   print("truck capacity: %s" % capacity)
   print("clients:")
   pprint(clients)
+  plot.draw_initial_state(depot, clients)
 
 
 if __name__ == "__main__":

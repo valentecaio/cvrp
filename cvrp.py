@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import argparse
 from pprint import pprint
 from classes import Client
 from utils import *

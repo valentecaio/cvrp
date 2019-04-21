@@ -1,5 +1,5 @@
 import argparse
-from classes import Client
+from classes import Client, Point
 
 # cast ' abc 123 ' to 'abc 123'
 def remove_spaces_in_borders(str):
@@ -37,6 +37,7 @@ def parse_vrp(filepath):
 
   # clients[1] is NOT a client: this is the depot
   depot = clients.pop(0)
+  depot = Point(depot._pos._x, depot._pos._y)
   return depot, clients
 
 # parse CLI args

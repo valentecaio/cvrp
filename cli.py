@@ -1,17 +1,10 @@
 import argparse
 from classes import Client, Point
 
-# cast ' abc 123 ' to 'abc 123'
-def remove_spaces_in_borders(str):
-  while(len(str) > 0 and str[0] == ' '):
-    str = str[1:]
-  while(len(str) > 0 and str[-1] == ' '):
-    str = str[:-1]
-  return str
-
-# returns a list of lines
+# returns a substring of s that starts right after flag_start and
+# ends right before flag_end
 def extract_section(s, flag_start, flag_end):
-  return s[s.find(flag_start)+len(flag_start):s.find(flag_end)].split('\n')[1:-1]
+  return s[s.find(flag_start)+len(flag_start):s.find(flag_end)]
 
 # read vrp file; returns clients and depot data
 def parse_vrp(filepath):
@@ -19,26 +12,28 @@ def parse_vrp(filepath):
   s = open(filepath, "r").read()
 
   # get coordinates substring
-  node_coord_section = extract_section(s, "NODE_COORD_SECTION", "DEMAND_SECTION")
+  node_coord_section = extract_section(s, "NODE_COORD_SECTION", "DEMAND_SECTION").split('\n')[1:-1]
   # get demands substring
-  demands_section = extract_section(s, "DEMAND_SECTION", "DEPOT_SECTION")
-  # get depot substring
-  # depot_section = extract_section(s, "DEPOT_SECTION", "EOF")
+  demands_section = extract_section(s, "DEMAND_SECTION", "DEPOT_SECTION").split('\n')[1:-1]
 
   # extract client data from read strings
   number_of_clients = len(demands_section)
   clients = []
   for i in range(0, number_of_clients):
     # parse client data
-    client_id, x, y = remove_spaces_in_borders(node_coord_section[i]).split(" ")
-    demand = remove_spaces_in_borders(demands_section[i]).split(" ")[-1]
+    client_id, x, y = node_coord_section[i].strip().split(" ")
+    demand = demands_section[i].strip().split(" ")[-1]
     # create client and add to clients list
     clients.append(Client(client_id, demand, x, y))
 
   # clients[1] is NOT a client: this is the depot
   depot = clients.pop(0)
   depot = Point(depot._pos._x, depot._pos._y)
-  return depot, clients
+
+  # extract capacity data from file
+  capacity = extract_section(s, "CAPACITY :", "NODE_COORD_SECTION").strip()
+
+  return depot, clients, capacity
 
 # parse CLI args
 def parse_args():
@@ -52,6 +47,8 @@ def parse_args():
   # optional args
   parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                       help='execute script in verbose mode')
+  parser.add_argument('-q', '--capacity', dest='capacity', type=int,
+                      help='override truck capacity')
 
   args = parser.parse_args()
-  return args.algorithm.pop(), args.filepath.pop(), args.verbose
+  return args.algorithm.pop(), args.filepath.pop(), args.verbose, args.capacity

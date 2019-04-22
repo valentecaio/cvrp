@@ -3,6 +3,8 @@
 from pprint import pprint
 from cli import parse_args, parse_vrp
 import plot
+import random
+from copy import deepcopy
 
 ### GLOBAL ATTRIBUTES ###
 
@@ -14,6 +16,26 @@ capacity = None
 def print_nodes():
   print("Nodes:")
   pprint(nodes)
+
+### TRANSFORMATION FUNCTIONS ###
+
+def transf_swap(route):
+  while True:
+    # keep original values
+    mod_route = deepcopy(route)
+
+    # pick two random indexes in the route,
+    # excluding the first and the last, that point to depot
+    node1, node2 = random.sample(range(1,len(route)-2), 2)
+    print("Swapping indexes %s and %s" % (node1, node2))
+
+    # swap them
+    mod_route[node1], mod_route[node2] = route[node2], route[node1]
+
+    # stop looping when a valid solution is found
+    if is_valid_solution(mod_route): break
+  return mod_route
+
 
 ### ALGORITHM FUNCTIONS ###
 
@@ -98,6 +120,10 @@ def main():
   # generate initial solution
   initial_solution = generate_initial_solution()
   print("Initial_solution: %s" % initial_solution)
+
+  route = transf_swap(initial_solution)
+  print("New solution: %s" % route)
+
 
   # plot.draw_initial_state(depot, nodes)
   # plot.draw_results(nodes, initial_solution)

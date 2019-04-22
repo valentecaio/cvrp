@@ -22,9 +22,11 @@ def print_nodes():
 
 ### TRANSFORMATION FUNCTIONS ###
 
+# all the transformation functions belo assure that their output
+# are valid solutions, which means, their output contain only
+# routes whose total demand is below a truck capacity
+
 # swap two random elements in a given solution
-# assure that the output is a valid solution, which means,
-# the output contain routes whose total demand is below a truck capacity
 def transf_swap(route):
   while True:
     # keep original values
@@ -37,6 +39,27 @@ def transf_swap(route):
 
     # swap them
     mod_route[node1], mod_route[node2] = route[node2], route[node1]
+
+    # stop looping when a valid solution is found
+    if is_valid_solution(mod_route): break
+  return mod_route
+
+# move a random element in a given solution to a new random index
+def transf_move(route):
+  while True:
+    # keep original values
+    mod_route = deepcopy(route)
+
+    # pick two random indexes in the route,
+    # excluding the first and the last, that point to depot
+    i1, i2 = random.sample(range(1, len(route)-2), 2)
+    # i1 must be smaller than i2
+    if i1 > i2:
+      i1, i2 = i2, i1
+    print("Moving value from index %s to index %s" % (i1, i2))
+
+    # move value from index i1 to index i2
+    mod_route = route[0:i1] + route[i1+1:i2] + [route[i1]] + route[i2:len(route)]
 
     # stop looping when a valid solution is found
     if is_valid_solution(mod_route): break
@@ -131,6 +154,8 @@ def main():
   route = transf_swap(initial_solution)
   print("New solution: %s" % route)
 
+  route = transf_move(initial_solution)
+  print("New solution: %s" % route)
 
   # plot.draw_initial_state(depot, nodes)
   # plot.draw_results(nodes, initial_solution)

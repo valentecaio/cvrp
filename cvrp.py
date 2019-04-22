@@ -4,6 +4,7 @@ from pprint import pprint
 from cli import parse_args, parse_vrp
 #import plot
 import random
+import math
 from copy import deepcopy
 
 ### GLOBAL VARIABLES ###
@@ -14,7 +15,7 @@ capacity = None
 INITIAL_TEMP = 20
 FINAL_TEMP = 1
 T_FACTOR = 0.95 #decreasing temperature by 0.05
-N_FACTOR = None #neighborhood ratio factor
+N_FACTOR = 0.1 #neighborhood ratio factor
 
 # SIZEFACTOR = 8 
 # CUTOFF = 0.2
@@ -43,7 +44,7 @@ def transf_swap(solution):
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
     i1, i2 = random.sample(range(1,len(solution)-1), 2)
-    print("Swapping indexes %s and %s" % (i1, i2))
+    #print("Swapping indexes %s and %s" % (i1, i2))
 
     # swap them
     new_solution[i1], new_solution[i2] = solution[i2], solution[i1]
@@ -64,7 +65,7 @@ def transf_move(solution):
     i1, i2 = random.sample(range(1, len(solution)-1), 2)
     # i1 must be smaller than i2
     i1, i2 = min(i1, i2), max(i1, i2)
-    print("Moving value from index %s to index %s" % (i1, i2))
+    #print("Moving value from index %s to index %s" % (i1, i2))
 
     # move value from index i1 to index i2
     new_solution = solution[:i1] + solution[i1+1:i2] + [solution[i1]] + solution[i2:]
@@ -84,7 +85,7 @@ def transf_flip(solution):
     i1, i2 = random.sample(range(1, len(solution)-1), 2)
     # i1 must be smaller than i2
     i1, i2 = min(i1, i2), max(i1, i2)
-    print("Inverting solution from index %s to index %s" % (i1, i2))
+    #print("Inverting solution from index %s to index %s" % (i1, i2))
 
     # invert values from index i1 to index i2
     new_solution = solution[:i1] + solution[i1:i2][::-1] + solution[i2:]
@@ -166,14 +167,14 @@ def generate_initial_solution():
 
 
 def is_acceptable(delta, T):
-  p = exp(-delta/T)
-  return rand() < p
+  p = math.exp(-delta/T)
+  return random.random() < p
 
 
 def generate_neighbor(solution):
   #apply randomly one of the three rules
   opt = random.randint(0, 2)
-  print("opt= %d" % opt)
+  #print("opt= %d" % opt)
   if opt == 0:
     return transf_swap(solution)
   elif opt == 1:
@@ -194,7 +195,7 @@ def cost(solution):
 
 def simulated_annealing():
   T = INITIAL_TEMP
-  N = len(nodes)*N_FACTOR
+  N = int(len(nodes)*N_FACTOR)
 
   best = current = initial = generate_initial_solution()
   cost_best = cost_current = cost_initial = cost(initial)
@@ -244,25 +245,30 @@ def main():
   costSol = cost(solution)
   print("Cost: %s" % costSol)
 
-  solution = transf_swap(solution)
-  print("New solution: %s" % solution)
-  costSol = cost(solution)
-  print("Cost: %s" % costSol)
+  # solution = transf_swap(solution)
+  # print("New solution: %s" % solution)
+  # costSol = cost(solution)
+  # print("Cost: %s" % costSol)
 
-  solution = transf_move(solution)
-  print("New solution: %s" % solution)
-  costSol = cost(solution)
-  print("Cost: %s" % costSol)
+  # solution = transf_move(solution)
+  # print("New solution: %s" % solution)
+  # costSol = cost(solution)
+  # print("Cost: %s" % costSol)
 
-  solution = transf_flip(solution)
-  print("New solution: %s" % solution)
-  costSol = cost(solution)
-  print("Cost: %s" % costSol)
+  # solution = transf_flip(solution)
+  # print("New solution: %s" % solution)
+  # costSol = cost(solution)
+  # print("Cost: %s" % costSol)
 
-  solution = generate_neighbor(solution)
-  print("New neighbor: %s" % solution)
-  costSol = cost(solution)
-  print("Cost: %s" % costSol)
+  # solution = generate_neighbor(solution)
+  # print("New neighbor: %s" % solution)
+  # costSol = cost(solution)
+  # print("Cost: %s" % costSol)
+
+  bestSolution = simulated_annealing()
+  print("Best solution: %s" % bestSolution)
+  costBest = cost(bestSolution)
+  print("best cost: %s" % costBest)
 
   # plot.draw_initial_state(depot, nodes)
   # plot.draw_results(nodes, initial_solution)

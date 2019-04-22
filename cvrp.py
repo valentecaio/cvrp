@@ -72,6 +72,9 @@ def transf_move(route):
     if is_valid_solution(mod_route): break
   return mod_route
 
+#flip an interval 
+def transf_flip(solution):
+  return solution
 
 ### ALGORITHM FUNCTIONS ###
 
@@ -149,12 +152,19 @@ def is_acceptable(delta, T):
 
 
 #TODO
-def generate_neighbor(state):
+def generate_neighbor(solution):
   #apply randomly one of the three rules
-  return state #temporary
+  opt = random.randint(0, 2)
+  print(opt)
+  if opt == 0:
+    return transf_swap(solution)
+  elif opt == 1:
+    return transf_move(solution)
+  else:
+    return transf_flip(solution)
 
 
-#TODO
+
 def cost(solution):
   cost = 0
   node = nodes[solution[0]]
@@ -227,6 +237,11 @@ def main():
 
   route = transf_move(initial_solution)
   print("New solution: %s" % route)
+  costSol = cost(route)
+  print("Cost: %s" % costSol)
+
+  route = generate_neighbor(initial_solution)
+  print("New neighbor: %s" % route)
   costSol = cost(route)
   print("Cost: %s" % costSol)
 

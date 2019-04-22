@@ -7,12 +7,12 @@ def save_plot():
   plt.savefig(filename, bbox_inches='tight')
 
 # plot a line between two points
-def draw_line(x1, y1, x2, y2):
+def draw_line(x1, y1, x2, y2, color):
   x_values = [x1, x2]
   y_values = [y1, y2]
 
   # plot the number in the list and set the line thickness.
-  plt.plot(x_values, y_values, linewidth=3)
+  plt.plot(x_values, y_values, linewidth=3, color=color)
 
 # draw client points based on their x, y axis values
 def draw_initial_state(nodes):
@@ -55,13 +55,15 @@ def draw_results(nodes, results):
   plt.scatter(depot.x, depot.y, s=10)
 
   # draw truck lines
-  for truck in results.trucks:
+  colors = ['b', 'g', 'r', 'c', 'm', 'y', 'b']
+  for i in range(len(results.trucks)):
+    color = colors[i%len(colors)]
+    truck = results.trucks[i]
     p1 = depot
-    while len(truck.route) > 0:
-      p2 = clients[int(truck.route[0])]
-      draw_line(p1.x, p1.y, p2.x, p2.y)
+    for node_id in truck.route[1:]:
+      p2 = nodes[node_id]
+      draw_line(p1.x, p1.y, p2.x, p2.y, color)
       p1 = p2
-      truck.route = truck.route[1:]
 
   plt.show()
 

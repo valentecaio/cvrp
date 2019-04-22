@@ -6,10 +6,12 @@ import plot
 import random
 from copy import deepcopy
 
-### GLOBAL ATTRIBUTES ###
+
+### GLOBAL VARIABLES ###
 
 nodes = None
 capacity = None
+
 
 ### DEBUG FUNCTIONS ###
 
@@ -17,8 +19,12 @@ def print_nodes():
   print("Nodes:")
   pprint(nodes)
 
+
 ### TRANSFORMATION FUNCTIONS ###
 
+# swap two random elements in a given solution
+# assure that the output is a valid solution, which means,
+# the output contain routes whose total demand is below a truck capacity
 def transf_swap(route):
   while True:
     # keep original values
@@ -106,10 +112,11 @@ def generate_initial_solution():
 
   return route
 
+
 ### MAIN ###
 
 def main():
-  # set global attributes from input
+  # set global variables from input
   global nodes, capacity
   algorithm, filepath, verbose, cli_capacity = parse_args()
   nodes, vrp_capacity = parse_vrp(filepath)

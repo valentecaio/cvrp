@@ -4,6 +4,7 @@ from pprint import pprint
 from cli import parse_args, parse_vrp
 from classes import Truck, State
 import plot
+import random
 
 ### DEBUG FUNCTIONS ###
 
@@ -87,6 +88,10 @@ def generate_initial_solution(nodes, capacity):
       initial_solution.append(client_id)
 
   return initial_solution
+
+def is_acceptable(deltaE, T):
+  p = exp(-deltaE/T)
+  return rand() < p
 
 ### MAIN ###
 

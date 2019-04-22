@@ -9,20 +9,22 @@ def print_state(state):
   print("Current state:")
   pprint(state)
 
-def print_clients(clients):
-  print("Clients:")
-  pprint(clients)
+def print_nodes(nodes):
+  print("Nodes:")
+  pprint(nodes)
 
-def method1(depot, clients, capacity):
+def method1(nodes, capacity):
+  depot = nodes[0]
+
   # initial state
   state = {
-    'clients_to_visit': [client.id for client in clients],
+    'clients_to_visit': [node.id for node in nodes[1:]],
     'trucks': [],
     'cost': 0
   }
 
   print("----- INITIAL STATE -----")
-  print_clients(clients)
+  print_nodes(nodes)
   print_state(state)
 
   while len(state['clients_to_visit']) > 0:
@@ -35,7 +37,7 @@ def method1(depot, clients, capacity):
       # calculate costs
       costs = {}
       for client_id in state['clients_to_visit']:
-        client = clients[client_id]
+        client = nodes[client_id]
         cost = truck.position.distance_to_node(client.x, client.y)
         # print("The cost to move to client %s is %s" % (client.id, cost))
         costs[client.id] = cost
@@ -48,9 +50,9 @@ def method1(depot, clients, capacity):
         # pick first element of list
         candidate_id, candidate_cost = costs[0]
         costs = costs[1:]
-        if clients[candidate_id].demand <= truck.capacity:
+        if nodes[candidate_id].demand <= truck.capacity:
           # this is a good candidate, it will be the next node
-          next_node = clients[candidate_id]
+          next_node = nodes[candidate_id]
           cost_to_next_node = candidate_cost
           break
       else:
@@ -73,13 +75,13 @@ def method1(depot, clients, capacity):
 
 def main():
   algorithm, filepath, verbose, cli_capacity = parse_args()
-  depot, clients, vrp_capacity = parse_vrp(filepath)
+  nodes, vrp_capacity = parse_vrp(filepath)
   capacity = cli_capacity if cli_capacity else vrp_capacity
-  print("depot: %s" % depot)
-  print("truck capacity: %s" % capacity)
-  results = method1(depot, clients, capacity)
-  # plot.draw_initial_state(depot, clients)
-  plot.draw_results(depot, clients, results)
+  print("Depot: %s" % nodes[0])
+  print("Capacity Q: %s" % capacity)
+  results = method1(nodes, capacity)
+  # plot.draw_initial_state(depot, nodes)
+  plot.draw_results(nodes, results)
 
 
 if __name__ == "__main__":

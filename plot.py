@@ -15,7 +15,10 @@ def draw_line(x1, y1, x2, y2):
   plt.plot(x_values, y_values, linewidth=3)
 
 # draw client points based on their x, y axis values
-def draw_initial_state(depot, clients):
+def draw_initial_state(nodes):
+  depot = nodes[0]
+  clients = nodes[1:]
+
   # draw clients
   x_list = []
   y_list = []
@@ -33,9 +36,12 @@ def draw_initial_state(depot, clients):
   save_plot()
   plt.show()
 
-def draw_results(depot, clients, results):
+def draw_results(nodes, results):
   # Set chart title.
   plt.title("Final state", fontsize=19)
+
+  depot = nodes[0]
+  clients = nodes[1:]
 
   # draw clients
   x_list = []

@@ -42,7 +42,7 @@ def transf_swap(solution):
 
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1,len(solution)-2), 2)
+    i1, i2 = random.sample(range(1,len(solution)-1), 2)
     print("Swapping indexes %s and %s" % (i1, i2))
 
     # swap them
@@ -67,6 +67,25 @@ def transf_move(solution):
 
     # move value from index i1 to index i2
     new_solution = solution[:i1] + solution[i1+1:i2] + [solution[i1]] + solution[i2:]
+
+    # stop looping when a valid solution is found
+    if is_valid_solution(new_solution): break
+  return new_solution
+
+# invert a random part of a given solution
+def transf_flip(solution):
+  while True:
+    # keep original values
+    new_solution = deepcopy(solution)
+
+    # pick two random indexes in the route
+    i1, i2 = random.sample(range(1, len(solution)-1), 2)
+    # i1 must be smaller than i2
+    i1, i2 = min(i1, i2), max(i1, i2)
+    print("Inverting solution from index %s to index %s" % (i1, i2))
+
+    # invert values from index i1 to index i2
+    new_solution = solution[:i1] + solution[i1:i2][::-1] + solution[i2:]
 
     # stop looping when a valid solution is found
     if is_valid_solution(new_solution): break
@@ -169,8 +188,7 @@ def simulated_annealing():
   N = len(nodes)*N_FACTOR
 
   best = current = initial = generate_initial_solution()
-  cost_initial = cost(initial)
-  cost_best = cost_current = cost_initial
+  cost_best = cost_current = cost_initial = cost(initial)
 
   while T > FINAL_TEMP:
     i = 0
@@ -211,19 +229,24 @@ def main():
   print_nodes()
 
   # generate initial solution
-  initial_solution = generate_initial_solution()
-  print("Initial_solution: %s" % initial_solution)
-  costSol = cost(initial_solution)
+  solution = generate_initial_solution()
+  print("Initial_solution: %s" % solution)
+  costSol = cost(solution)
   print("Cost: %s" % costSol)
 
-  route = transf_swap(initial_solution)
-  print("New solution: %s" % route)
-  costSol = cost(route)
+  solution = transf_swap(solution)
+  print("New solution: %s" % solution)
+  costSol = cost(solution)
   print("Cost: %s" % costSol)
 
-  route = transf_move(route)
-  print("New solution: %s" % route)
-  costSol = cost(route)
+  solution = transf_move(solution)
+  print("New solution: %s" % solution)
+  costSol = cost(solution)
+  print("Cost: %s" % costSol)
+
+  solution = transf_flip(solution)
+  print("New solution: %s" % solution)
+  costSol = cost(solution)
   print("Cost: %s" % costSol)
 
   # plot.draw_initial_state(depot, nodes)

@@ -77,7 +77,7 @@ def main():
   print("Capacity Q: %s" % capacity)
   results = method1(nodes, capacity)
   # plot.draw_initial_state(depot, nodes)
-  plot.draw_results(nodes, results)
+  plot.draw_results(nodes, results.trucks)
 
 
 if __name__ == "__main__":

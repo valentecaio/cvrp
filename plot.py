@@ -36,7 +36,7 @@ def draw_initial_state(nodes):
   save_plot()
   plt.show()
 
-def draw_results(nodes, results):
+def draw_results(nodes, trucks):
   # Set chart title.
   plt.title("Final state", fontsize=19)
 
@@ -56,9 +56,9 @@ def draw_results(nodes, results):
 
   # draw truck lines
   colors = ['b', 'g', 'r', 'c', 'm', 'y', 'b']
-  for i in range(len(results.trucks)):
+  for i in range(len(trucks)):
     color = colors[i%len(colors)]
-    truck = results.trucks[i]
+    truck = trucks[i]
     p1 = depot
     for node_id in truck.route[1:]:
       p2 = nodes[node_id]
@@ -68,6 +68,6 @@ def draw_results(nodes, results):
   plt.show()
 
 if __name__ == "__main__":
-  draw_line(1, 1, 2, 3)
+  draw_line(1, 1, 2, 3, 'b')
   plt.show()
   

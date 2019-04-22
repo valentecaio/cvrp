@@ -18,6 +18,20 @@ def print_nodes(nodes):
 
 ### ALGORITHM FUNCTIONS ###
 
+def is_valid_solution(nodes, capacity, solution):
+  end = start = 0
+  while end < len(solution):
+    # find next route in solution
+    start = end + 1
+    end = start + solution[start:].index(0) + 1
+    route = solution[start:end]
+    # if route demand is greater than truck capacity, this solution is not ok
+    route_demand = sum([nodes[client_id].demand for client_id in route])
+    if route_demand > capacity: return False
+    # print("start = %s, end = %s, route_cost = %s" % (start, end, route_demand))
+  # all routes are below truck capacity, solution ok
+  return True
+
 def generate_initial_solution(nodes, capacity):
   depot = nodes[0]
 
@@ -92,7 +106,8 @@ def main():
   print("Capacity Q: %s" % capacity)
   initial_solution = generate_initial_solution(nodes, capacity)
   # plot.draw_initial_state(depot, nodes)
-  plot.draw_results(nodes, initial_solution)
+  # plot.draw_results(nodes, initial_solution)
+  is_valid_solution(nodes, capacity, initial_solution)
 
 if __name__ == "__main__":
   main()

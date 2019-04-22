@@ -34,11 +34,11 @@ def transf_swap(route):
 
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
-    node1, node2 = random.sample(range(1,len(route)-2), 2)
-    print("Swapping indexes %s and %s" % (node1, node2))
+    i1, i2 = random.sample(range(1,len(route)-2), 2)
+    print("Swapping indexes %s and %s" % (i1, i2))
 
     # swap them
-    mod_route[node1], mod_route[node2] = route[node2], route[node1]
+    mod_route[i1], mod_route[i2] = route[i2], route[i1]
 
     # stop looping when a valid solution is found
     if is_valid_solution(mod_route): break

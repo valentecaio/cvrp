@@ -142,24 +142,35 @@ def generate_initial_solution():
 
   return route
 
+
 def is_acceptable(delta, T):
   p = exp(-delta/T)
   return rand() < p
+
 
 #TODO
 def generate_neighbor(state):
   #apply randomly one of the three rules
   return state #temporary
 
+
 #TODO
 def cost(solution):
-  return 0
+  cost = 0
+  node = nodes[solution[0]]
+  for sol in solution[1:]:
+    adj_node = nodes[sol]
+    cost += node.distance_to_node(adj_node.x, adj_node.y)
+    node = adj_node
+  return cost
 
 def simulated_annealing():
   T = INITIAL_TEMP
   N = len(nodes)*N_FACTOR
 
   best = current = initial = generate_initial_solution()
+  cost_initial = cost(initial)
+  cost_best = cost_current = cost_initial
 
   while T > FINAL_TEMP:
     i = 0
@@ -168,20 +179,25 @@ def simulated_annealing():
     while i < N:
       #generate a new state from the current state
       new = generate_neighbor(current)
-      deltaC = cost(new) - cost(current)
+      cost_new = cost(new)
 
-      if deltaC < 0: #new solution is better than current
+      deltaC = cost_new - cost_current
+
+      if deltaC < 0: #new solution is better than current 
         current = new
-        if cost(new) < cost(best): #new solution is best
+        cost_current = cost_new
+        if cost_new < cost_best: #new solution is best
           best = new
+          cost_best = cost_new
       #accepts a worse solution w/ a probability of exp(-delta/T)
       elif is_acceptable(deltaC, T):
         current = new
+        cost_current = cost_new
 
       i += 1
     #decreases temperature
     T *= T_FACTOR
-
+  return best
 
 ### MAIN ###
 
@@ -197,12 +213,18 @@ def main():
   # generate initial solution
   initial_solution = generate_initial_solution()
   print("Initial_solution: %s" % initial_solution)
+  costSol = cost(initial_solution)
+  print("Cost: %s" % costSol)
 
   route = transf_swap(initial_solution)
   print("New solution: %s" % route)
+  costSol = cost(route)
+  print("Cost: %s" % costSol)
 
   route = transf_move(route)
   print("New solution: %s" % route)
+  costSol = cost(route)
+  print("Cost: %s" % costSol)
 
   # plot.draw_initial_state(depot, nodes)
   # plot.draw_results(nodes, initial_solution)

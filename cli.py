@@ -1,5 +1,5 @@
 import argparse
-from classes import Client, Point
+from classes import Node
 
 # returns a substring of s that starts right after flag_start and
 # ends right before flag_end
@@ -24,14 +24,14 @@ def parse_vrp(filepath):
     x, y = node_coord_section[i].strip().split(" ")[1:]
     demand = demands_section[i].strip().split(" ")[-1]
     # create client and add to clients list
-    clients.append(Client(i-1, demand, x, y))
+    clients.append(Node(i-1, demand, x, y))
 
   # the first "client" of the list is NOT a client: this is the depot
   x, y = node_coord_section[0].strip().split(" ")[1:]
-  depot = Point(x, y)
+  depot = Node("DEPOT", 0, x, y)
 
   # extract capacity data from file
-  capacity = extract_section(s, "CAPACITY :", "NODE_COORD_SECTION").strip()
+  capacity = int(extract_section(s, "CAPACITY :", "NODE_COORD_SECTION").strip())
 
   return depot, clients, capacity
 

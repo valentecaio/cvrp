@@ -36,6 +36,7 @@ class Truck:
     self.route.append(node.id)
     self.position = node
 
+
 class State:
   def __init__(self, clients_to_visit):
     self.clients_to_visit = clients_to_visit

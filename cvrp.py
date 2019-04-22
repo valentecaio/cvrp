@@ -5,6 +5,8 @@ from cli import parse_args, parse_vrp
 from classes import Truck, State
 import plot
 
+### DEBUG FUNCTIONS ###
+
 def print_state(state):
   print("Current state:")
   print(state)
@@ -14,7 +16,9 @@ def print_nodes(nodes):
   print("Nodes:")
   pprint(nodes)
 
-def method1(nodes, capacity):
+### ALGORITHM FUNCTIONS ###
+
+def generate_initial_solution(nodes, capacity):
   depot = nodes[0]
 
   # initial state
@@ -67,7 +71,18 @@ def method1(nodes, capacity):
   
   print("----- FINAL STATE -----")
   print_state(state)
-  return state
+
+  # convert state to an initial solution in the desired format
+  # ex: [0, 21, 16, 18, 25, 5, 4, 29, 8, 11, 0, 28, 26, 12, 23, 7, 6, 0, 22, 9, 13, 17, 30, 3, 2, 0, 24, 19, 1, 15, 14, 10, 20, 0, 27, 0]
+  initial_solution = [0]
+  for truck in state.trucks:
+    for client_id in truck.route[1:]:
+      initial_solution.append(client_id)
+
+  print("initial_solution: %s" % initial_solution)
+  return initial_solution
+
+### MAIN ###
 
 def main():
   algorithm, filepath, verbose, cli_capacity = parse_args()
@@ -75,10 +90,9 @@ def main():
   capacity = cli_capacity if cli_capacity else vrp_capacity
   print("Depot: %s" % nodes[0])
   print("Capacity Q: %s" % capacity)
-  results = method1(nodes, capacity)
+  initial_solution = generate_initial_solution(nodes, capacity)
   # plot.draw_initial_state(depot, nodes)
-  plot.draw_results(nodes, results.trucks)
-
+  plot.draw_results(nodes, initial_solution)
 
 if __name__ == "__main__":
   main()

@@ -4,20 +4,20 @@ from pprint import pprint
 from cli import parse_args, parse_vrp
 import plot
 
+### GLOBAL ATTRIBUTES ###
+
+nodes = None
+capacity = None
+
 ### DEBUG FUNCTIONS ###
 
-def print_state(state):
-  print("Current state:")
-  print(state)
-  pprint(state.trucks)
-
-def print_nodes(nodes):
+def print_nodes():
   print("Nodes:")
   pprint(nodes)
 
 ### ALGORITHM FUNCTIONS ###
 
-def is_valid_solution(nodes, capacity, solution):
+def is_valid_solution(solution):
   end = start = 0
   while end < len(solution):
     # find next route in solution
@@ -32,7 +32,7 @@ def is_valid_solution(nodes, capacity, solution):
   return True
 
 # greedy algorithm that generates a valid initial solution
-def generate_initial_solution(nodes, capacity):
+def generate_initial_solution():
   depot = nodes[0]
 
   # initial state
@@ -87,17 +87,21 @@ def generate_initial_solution(nodes, capacity):
 ### MAIN ###
 
 def main():
+  # set global attributes from input
+  global nodes, capacity
   algorithm, filepath, verbose, cli_capacity = parse_args()
   nodes, vrp_capacity = parse_vrp(filepath)
   capacity = cli_capacity if cli_capacity else vrp_capacity
   print("Capacity Q: %s" % capacity)
-  print_nodes(nodes)
-  initial_solution = generate_initial_solution(nodes, capacity)
+  print_nodes()
+
+  # generate initial solution
+  initial_solution = generate_initial_solution()
   print("Initial_solution: %s" % initial_solution)
 
   # plot.draw_initial_state(depot, nodes)
   # plot.draw_results(nodes, initial_solution)
-  is_valid_solution(nodes, capacity, initial_solution)
+
 
 if __name__ == "__main__":
   main()

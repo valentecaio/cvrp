@@ -52,6 +52,7 @@ def transf_swap(solution):
     if is_valid_solution(new_solution): break
   return new_solution
 
+
 # move a random element in a given solution to a random new index
 def transf_move(solution):
   while True:
@@ -72,6 +73,7 @@ def transf_move(solution):
     if is_valid_solution(new_solution): break
   return new_solution
 
+
 # invert a random part of a given solution
 def transf_flip(solution):
   while True:
@@ -91,9 +93,6 @@ def transf_flip(solution):
     if is_valid_solution(new_solution): break
   return new_solution
 
-#flip an interval 
-def transf_flip(solution):
-  return solution
 
 ### ALGORITHM FUNCTIONS ###
 
@@ -110,6 +109,7 @@ def is_valid_solution(solution):
     # print("start = %s, end = %s, route_cost = %s" % (start, end, route_demand))
   # all routes are below truck capacity, solution ok
   return True
+
 
 # greedy algorithm that generates a valid initial solution
 def generate_initial_solution():
@@ -170,18 +170,16 @@ def is_acceptable(delta, T):
   return rand() < p
 
 
-#TODO
 def generate_neighbor(solution):
   #apply randomly one of the three rules
   opt = random.randint(0, 2)
-  print(opt)
+  print("opt= %d" % opt)
   if opt == 0:
     return transf_swap(solution)
   elif opt == 1:
     return transf_move(solution)
   else:
     return transf_flip(solution)
-
 
 
 def cost(solution):
@@ -192,6 +190,7 @@ def cost(solution):
     cost += node.distance_to_node(adj_node.x, adj_node.y)
     node = adj_node
   return cost
+
 
 def simulated_annealing():
   T = INITIAL_TEMP
@@ -227,6 +226,7 @@ def simulated_annealing():
     T *= T_FACTOR
   return best
 
+
 ### MAIN ###
 
 def main():
@@ -259,9 +259,9 @@ def main():
   costSol = cost(solution)
   print("Cost: %s" % costSol)
 
-  route = generate_neighbor(initial_solution)
-  print("New neighbor: %s" % route)
-  costSol = cost(route)
+  solution = generate_neighbor(solution)
+  print("New neighbor: %s" % solution)
+  costSol = cost(solution)
   print("Cost: %s" % costSol)
 
   # plot.draw_initial_state(depot, nodes)

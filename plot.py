@@ -55,13 +55,13 @@ def draw_results(nodes, results):
   plt.scatter(depot.x, depot.y, s=10)
 
   # draw truck lines
-#   for truck in results['trucks']:
-#     p1 = depot
-#     while len(truck.route) > 0:
-#       p2 = clients[int(truck.route[0])]
-#       draw_line(p1.x, p1.y, p2.x, p2.y)
-#       p1 = p2
-#       truck.route = truck.route[1:]
+  for truck in results.trucks:
+    p1 = depot
+    while len(truck.route) > 0:
+      p2 = clients[int(truck.route[0])]
+      draw_line(p1.x, p1.y, p2.x, p2.y)
+      p1 = p2
+      truck.route = truck.route[1:]
 
   plt.show()
 

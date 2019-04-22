@@ -35,3 +35,17 @@ class Truck:
     self.capacity -= node.demand
     self.route.append(node.id)
     self.position = node
+
+class State:
+  def __init__(self, clients_to_visit):
+    self.clients_to_visit = clients_to_visit
+    self.trucks = []
+    self.cost = 0
+
+  def __repr__(self):
+    return "(clients_to_visit %s, cost: %s)"\
+          % (self.clients_to_visit, self.cost)
+
+  def remove_client(self, id_to_remove):
+    if id_to_remove in self.clients_to_visit:
+      self.clients_to_visit.remove(id_to_remove)

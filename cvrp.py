@@ -2,12 +2,13 @@
 
 from pprint import pprint
 from cli import parse_args, parse_vrp
-from classes import Truck
+from classes import Truck, State
 import plot
 
 def print_state(state):
   print("Current state:")
-  pprint(state)
+  print(state)
+  pprint(state.trucks)
 
 def print_nodes(nodes):
   print("Nodes:")
@@ -17,26 +18,22 @@ def method1(nodes, capacity):
   depot = nodes[0]
 
   # initial state
-  state = {
-    'clients_to_visit': [node.id for node in nodes[1:]],
-    'trucks': [],
-    'cost': 0
-  }
+  state = State([node.id for node in nodes[1:]])
 
   print("----- INITIAL STATE -----")
   print_nodes(nodes)
   print_state(state)
 
-  while len(state['clients_to_visit']) > 0:
+  while len(state.clients_to_visit) > 0:
     # create a truck to visit nodes that have not been visited before
-    truck = Truck(len(state['trucks']), capacity, depot)
-    state['trucks'].append(truck)
+    truck = Truck(len(state.trucks), capacity, depot)
+    state.trucks.append(truck)
 
     # truck looping
     while True:
       # calculate costs
       costs = {}
-      for client_id in state['clients_to_visit']:
+      for client_id in state.clients_to_visit:
         client = nodes[client_id]
         cost = truck.position.distance_to_node(client.x, client.y)
         # print("The cost to move to client %s is %s" % (client.id, cost))
@@ -62,9 +59,8 @@ def method1(nodes, capacity):
 
       # go to next node and update state
       truck.move_to_node(next_node)
-      state['cost'] += cost_to_next_node
-      if next_node.id in state['clients_to_visit']:
-        state['clients_to_visit'].remove(next_node.id)
+      state.cost += cost_to_next_node
+      state.remove_client(next_node.id)
 
       # stop truck looping when truck has returned to depot
       if truck.position == depot: break

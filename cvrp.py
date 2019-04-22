@@ -35,42 +35,42 @@ def print_nodes():
 # routes whose total demand is below a truck capacity
 
 # swap two random elements in a given solution
-def transf_swap(route):
+def transf_swap(solution):
   while True:
     # keep original values
-    mod_route = deepcopy(route)
+    new_solution = deepcopy(solution)
 
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1,len(route)-2), 2)
+    i1, i2 = random.sample(range(1,len(solution)-2), 2)
     print("Swapping indexes %s and %s" % (i1, i2))
 
     # swap them
-    mod_route[i1], mod_route[i2] = route[i2], route[i1]
+    new_solution[i1], new_solution[i2] = solution[i2], solution[i1]
 
     # stop looping when a valid solution is found
-    if is_valid_solution(mod_route): break
-  return mod_route
+    if is_valid_solution(new_solution): break
+  return new_solution
 
 # move a random element in a given solution to a random new index
-def transf_move(route):
+def transf_move(solution):
   while True:
     # keep original values
-    mod_route = deepcopy(route)
+    new_solution = deepcopy(solution)
 
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1, len(route)-1), 2)
+    i1, i2 = random.sample(range(1, len(solution)-1), 2)
     # i1 must be smaller than i2
     i1, i2 = min(i1, i2), max(i1, i2)
     print("Moving value from index %s to index %s" % (i1, i2))
 
     # move value from index i1 to index i2
-    mod_route = route[:i1] + route[i1+1:i2] + [route[i1]] + route[i2:]
+    new_solution = solution[:i1] + solution[i1+1:i2] + [solution[i1]] + solution[i2:]
 
     # stop looping when a valid solution is found
-    if is_valid_solution(mod_route): break
-  return mod_route
+    if is_valid_solution(new_solution): break
+  return new_solution
 
 
 ### ALGORITHM FUNCTIONS ###

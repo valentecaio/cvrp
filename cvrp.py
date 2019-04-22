@@ -2,24 +2,57 @@
 
 from pprint import pprint
 from cli import parse_args, parse_vrp
-from classes import Truck, State
-import plot
+#import plot
 import random
+from copy import deepcopy
+
+### GLOBAL VARIABLES ###
+
+nodes = None
+capacity = None
+
+INITIAL_TEMP = 20
+FINAL_TEMP = 1
+T_FACTOR = 0.95 #decreasing temperature by 0.05
+N_FACTOR = None #neighborhood ratio factor
+
+# SIZEFACTOR = 8 
+# CUTOFF = 0.2
+# FINDIVISOR = 50
 
 ### DEBUG FUNCTIONS ###
 
-def print_state(state):
-  print("Current state:")
-  print(state)
-  pprint(state.trucks)
-
-def print_nodes(nodes):
+def print_nodes():
   print("Nodes:")
   pprint(nodes)
 
+
+### TRANSFORMATION FUNCTIONS ###
+
+# swap two random elements in a given solution
+# assure that the output is a valid solution, which means,
+# the output contain routes whose total demand is below a truck capacity
+def transf_swap(route):
+  while True:
+    # keep original values
+    mod_route = deepcopy(route)
+
+    # pick two random indexes in the route,
+    # excluding the first and the last, that point to depot
+    node1, node2 = random.sample(range(1,len(route)-2), 2)
+    print("Swapping indexes %s and %s" % (node1, node2))
+
+    # swap them
+    mod_route[node1], mod_route[node2] = route[node2], route[node1]
+
+    # stop looping when a valid solution is found
+    if is_valid_solution(mod_route): break
+  return mod_route
+
+
 ### ALGORITHM FUNCTIONS ###
 
-def is_valid_solution(nodes, capacity, solution):
+def is_valid_solution(solution):
   end = start = 0
   while end < len(solution):
     # find next route in solution
@@ -33,36 +66,37 @@ def is_valid_solution(nodes, capacity, solution):
   # all routes are below truck capacity, solution ok
   return True
 
-def generate_initial_solution(nodes, capacity):
+# greedy algorithm that generates a valid initial solution
+def generate_initial_solution():
   depot = nodes[0]
 
   # initial state
-  state = State([node.id for node in nodes[1:]])
+  clients_to_visit = [node.id for node in nodes[1:]]
+  route = [0]
+  total_cost = 0
 
-  while len(state.clients_to_visit) > 0:
+  while len(clients_to_visit) > 0:
     # create a truck to visit nodes that have not been visited before
-    truck = Truck(len(state.trucks), capacity, depot)
-    state.trucks.append(truck)
+    truck_capacity = capacity
+    truck_position = 0
 
     # truck looping
     while True:
       # calculate costs
       costs = {}
-      for client_id in state.clients_to_visit:
+      for client_id in clients_to_visit:
         client = nodes[client_id]
-        cost = truck.position.distance_to_node(client.x, client.y)
-        # print("The cost to move to client %s is %s" % (client.id, cost))
-        costs[client.id] = cost
+        cost = nodes[truck_position].distance_to_node(client.x, client.y)
+        costs[client_id] = cost
       # sort possibilities from smallest to biggest cost, [(client_id, cost)]
       costs = sorted(costs.items(), key = lambda kv: (kv[1], kv[0]))
-      # print("Sorted costs : %s " % costs)
 
       # choose next destination (next client or depot)
       while len(costs) > 0:
         # pick first element of list
         candidate_id, candidate_cost = costs[0]
         costs = costs[1:]
-        if nodes[candidate_id].demand <= truck.capacity:
+        if nodes[candidate_id].demand <= truck_capacity:
           # this is a good candidate, it will be the next node
           next_node = nodes[candidate_id]
           cost_to_next_node = candidate_cost
@@ -70,43 +104,89 @@ def generate_initial_solution(nodes, capacity):
       else:
         # if truck capacity is not enough for any client, return to depot
         next_node = depot
-        cost_to_next_node = truck.position.distance_to_node(depot.x, depot.y)
+        cost_to_next_node = nodes[truck_position].distance_to_node(depot.x, depot.y)
 
       # go to next node and update state
-      truck.move_to_node(next_node)
-      state.cost += cost_to_next_node
-      state.remove_client(next_node.id)
+      route.append(next_node.id)
+      truck_capacity -= next_node.demand
+      truck_position = next_node.id
+      total_cost += cost_to_next_node
+      if next_node.id in clients_to_visit:
+        clients_to_visit.remove(next_node.id)
 
       # stop truck looping when truck has returned to depot
-      if truck.position == depot: break
-  
-  # convert state to an initial solution in the desired format
-  # ex: [0, 21, 16, 18, 25, 5, 4, 29, 8, 11, 0, 28, 26, 12, 23, 7, 6, 0, 22, 9, 13, 17, 30, 3, 2, 0, 24, 19, 1, 15, 14, 10, 20, 0, 27, 0]
-  initial_solution = [0]
-  for truck in state.trucks:
-    for client_id in truck.route[1:]:
-      initial_solution.append(client_id)
+      if truck_position == depot.id: break
 
-  return initial_solution
+  return route
 
-def is_acceptable(deltaE, T):
-  p = exp(-deltaE/T)
+def is_acceptable(delta, T):
+  p = exp(-delta/T)
   return rand() < p
+
+#TODO
+def generate_neighbor(state):
+  #apply randomly one of the three rules
+  return state #temporary
+
+#TODO
+def cost(solution):
+  return 0
+
+
+
+def simulated_annealing():
+  T = INITIAL_TEMP
+  N = len(nodes)*N_FACTOR
+
+  initial = generate_initial_solution()
+  current = initial
+  best = current
+
+  while T > FINAL_TEMP:
+    i = 0
+
+    #local search iteration
+    while i < N:
+      #generate a new state from de current state
+      new = generate_neighbor(current)
+      deltaC = cost(new) - cost(current)
+
+      if deltaC < 0: #new solution is better than current
+        current = new
+        if cost(new) < cost(best): #new solution is best
+          best = new
+      #accepts a worse solution w/ a probability of exp(-delta/T)
+      elif is_acceptable(deltaC, T):
+        current = new
+
+      i += 1
+    #decreases temperature
+    T *= T_FACTOR
+
+
 
 ### MAIN ###
 
 def main():
+  # set global variables from input
+  global nodes, capacity
   algorithm, filepath, verbose, cli_capacity = parse_args()
   nodes, vrp_capacity = parse_vrp(filepath)
   capacity = cli_capacity if cli_capacity else vrp_capacity
   print("Capacity Q: %s" % capacity)
-  print_nodes(nodes)
-  initial_solution = generate_initial_solution(nodes, capacity)
+  print_nodes()
+
+  # generate initial solution
+  initial_solution = generate_initial_solution()
   print("Initial_solution: %s" % initial_solution)
+
+  route = transf_swap(initial_solution)
+  print("New solution: %s" % route)
+
 
   # plot.draw_initial_state(depot, nodes)
   # plot.draw_results(nodes, initial_solution)
-  is_valid_solution(nodes, capacity, initial_solution)
+
 
 if __name__ == "__main__":
   main()

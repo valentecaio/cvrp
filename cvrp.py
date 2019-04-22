@@ -20,6 +20,7 @@ N_FACTOR = None #neighborhood ratio factor
 # CUTOFF = 0.2
 # FINDIVISOR = 50
 
+
 ### DEBUG FUNCTIONS ###
 
 def print_nodes():
@@ -29,7 +30,7 @@ def print_nodes():
 
 ### TRANSFORMATION FUNCTIONS ###
 
-# all the transformation functions belo assure that their output
+# all the transformation functions below assure that their output
 # are valid solutions, which means, their output contain only
 # routes whose total demand is below a truck capacity
 
@@ -51,7 +52,7 @@ def transf_swap(route):
     if is_valid_solution(mod_route): break
   return mod_route
 
-# move a random element in a given solution to a new random index
+# move a random element in a given solution to a random new index
 def transf_move(route):
   while True:
     # keep original values
@@ -59,14 +60,13 @@ def transf_move(route):
 
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1, len(route)-2), 2)
+    i1, i2 = random.sample(range(1, len(route)-1), 2)
     # i1 must be smaller than i2
-    if i1 > i2:
-      i1, i2 = i2, i1
+    i1, i2 = min(i1, i2), max(i1, i2)
     print("Moving value from index %s to index %s" % (i1, i2))
 
     # move value from index i1 to index i2
-    mod_route = route[0:i1] + route[i1+1:i2] + [route[i1]] + route[i2:len(route)]
+    mod_route = route[:i1] + route[i1+1:i2] + [route[i1]] + route[i2:]
 
     # stop looping when a valid solution is found
     if is_valid_solution(mod_route): break
@@ -155,22 +155,18 @@ def generate_neighbor(state):
 def cost(solution):
   return 0
 
-
-
 def simulated_annealing():
   T = INITIAL_TEMP
   N = len(nodes)*N_FACTOR
 
-  initial = generate_initial_solution()
-  current = initial
-  best = current
+  best = current = initial = generate_initial_solution()
 
   while T > FINAL_TEMP:
     i = 0
 
     #local search iteration
     while i < N:
-      #generate a new state from de current state
+      #generate a new state from the current state
       new = generate_neighbor(current)
       deltaC = cost(new) - cost(current)
 
@@ -185,7 +181,6 @@ def simulated_annealing():
       i += 1
     #decreases temperature
     T *= T_FACTOR
-
 
 
 ### MAIN ###
@@ -206,12 +201,11 @@ def main():
   route = transf_swap(initial_solution)
   print("New solution: %s" % route)
 
-  route = transf_move(initial_solution)
+  route = transf_move(route)
   print("New solution: %s" % route)
 
   # plot.draw_initial_state(depot, nodes)
   # plot.draw_results(nodes, initial_solution)
-
 
 if __name__ == "__main__":
   main()

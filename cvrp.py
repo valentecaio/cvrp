@@ -2,10 +2,11 @@
 
 from pprint import pprint
 from cli import parse_args, parse_vrp
-# import plot
+from copy import deepcopy
+from time import time
 import random
 import math
-from copy import deepcopy
+# import plot
 
 ### GLOBAL VARIABLES ###
 
@@ -242,6 +243,8 @@ def main():
   print("Capacity Q: %s" % capacity)
   print_nodes()
 
+  start_time = time()
+
   # generate initial solution
   solution = generate_initial_solution()
   print("Initial_solution: %s" % solution)
@@ -273,7 +276,10 @@ def main():
   costBest = cost(bestSolution)
   print("best cost: %s" % costBest)
 
-  # plot.draw_solution(nodes, bestSolution, verbose)
+  end_time = time()
+  print("Took %.3f seconds to execute" % (end_time - start_time))
+
+  # plot.draw_solution(nodes, solution, verbose)
 
 if __name__ == "__main__":
   main()

@@ -271,10 +271,10 @@ def main():
 
   start_time = time()
   bestSolution = simulated_annealing()
-  print("Best solution: %s" % bestSolution)
-  costBest = cost(bestSolution)
-  print("best cost: %s" % costBest)
   end_time = time()
+  costBest = cost(bestSolution)
+  print("Best solution: %s" % bestSolution)
+  print("Best cost: %s" % costBest)
   print("Took %.3f seconds to execute" % (end_time - start_time))
 
   # plot.draw_solution(nodes, solution, verbose)

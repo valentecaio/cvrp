@@ -42,7 +42,7 @@ def transf_swap(solution):
 
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1,len(solution)-1), 2)
+    i1, i2 = random.sample(range(1,len(solution)-2), 2)
     print("Swapping indexes %s and %s" % (i1, i2))
 
     # swap them
@@ -60,7 +60,7 @@ def transf_move(solution):
 
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1, len(solution)-1), 2)
+    i1, i2 = random.sample(range(1, len(solution)-2), 2)
     # i1 must be smaller than i2
     i1, i2 = min(i1, i2), max(i1, i2)
     print("Moving value from index %s to index %s" % (i1, i2))
@@ -79,7 +79,7 @@ def transf_flip(solution):
     new_solution = deepcopy(solution)
 
     # pick two random indexes in the route
-    i1, i2 = random.sample(range(1, len(solution)-1), 2)
+    i1, i2 = random.sample(range(1, len(solution)-2), 2)
     # i1 must be smaller than i2
     i1, i2 = min(i1, i2), max(i1, i2)
     print("Inverting solution from index %s to index %s" % (i1, i2))

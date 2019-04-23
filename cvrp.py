@@ -2,21 +2,22 @@
 
 from pprint import pprint
 from cli import parse_args, parse_vrp
-# import plot
+from copy import deepcopy
+from time import time
 import random
 import math
-from copy import deepcopy
+# import plot
 
 ### GLOBAL VARIABLES ###
 
-nodes = None
-capacity = None
-verbose = False
+nodes = None        # nodes loaded from given file
+capacity = None     # capacity of a truck, override with -q
+verbose = False     # enable logs, override with -v
 
 INITIAL_TEMP = 20
-FINAL_TEMP = 1
-T_FACTOR = 0.95 #decreasing temperature by 0.05
-N_FACTOR = 0.1 #neighborhood ratio factor
+FINAL_TEMP = 1      # stop condition
+T_FACTOR = 0.99     # decreasing temperature by (1 - T_FACTOR)
+N_FACTOR = 0.7      # neighborhood ratio factor
 
 SIZEFACTOR = 8 
 CUTOFF = 0.2
@@ -54,7 +55,6 @@ def transf_swap(solution):
     if is_valid_solution(new_solution): break
   return new_solution
 
-
 # move a random element in a given solution to a random new index
 def transf_move(solution):
   while True:
@@ -74,7 +74,6 @@ def transf_move(solution):
     # stop looping when a valid solution is found
     if is_valid_solution(new_solution): break
   return new_solution
-
 
 # invert a random part of a given solution
 def transf_flip(solution):
@@ -102,11 +101,12 @@ def is_valid_solution(solution):
   end = start = 0
   while end < len(solution):
     # find next route in solution
-    start = end + 1
+    start = end
     end = start + solution[start:].index(0) + 1
     route = solution[start:end]
     # if route demand is greater than truck capacity, this solution is not ok
     route_demand = sum([nodes[client_id].demand for client_id in route])
+    # if verbose: print("route: %s, demand: %s" % (route, route_demand))
     if route_demand > capacity: return False
     # print("start = %s, end = %s, route_cost = %s" % (start, end, route_demand))
   # all routes are below truck capacity, solution ok
@@ -190,6 +190,7 @@ def cost(solution):
   for sol in solution[1:]:
     adj_node = nodes[sol]
     cost += node.distance_to_node(adj_node.x, adj_node.y)
+    # print("cost from %s to %s is %s" % (node.id, adj_node.id, cost))
     node = adj_node
   return cost
 
@@ -198,8 +199,8 @@ def simulated_annealing():
   T = INITIAL_TEMP
   N = 2*(len(nodes)**2)
 
-  best = current = initial = generate_initial_solution()
-  cost_best = cost_current = cost_initial = cost(initial)
+  best = current = generate_initial_solution()
+  cost_best = cost_current = cost(current)
 
   while T >= INITIAL_TEMP/FINDIVISOR:
     i = 0
@@ -270,12 +271,16 @@ def main():
   # costSol = cost(solution)
   # print("Cost: %s" % costSol)
 
-  bestSolution = simulated_annealing()
-  print("Best solution: %s" % bestSolution)
-  costBest = cost(bestSolution)
-  print("best cost: %s" % costBest)
 
-  # plot.draw_solution(nodes, bestSolution, verbose)
+  start_time = time()
+  bestSolution = simulated_annealing()
+  end_time = time()
+  costBest = cost(bestSolution)
+  print("Best solution: %s" % bestSolution)
+  print("Best cost: %s" % costBest)
+  print("Took %.3f seconds to execute" % (end_time - start_time))
+
+  # plot.draw_solution(nodes, solution, verbose)
 
 if __name__ == "__main__":
   main()

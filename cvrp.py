@@ -102,11 +102,12 @@ def is_valid_solution(solution):
   end = start = 0
   while end < len(solution):
     # find next route in solution
-    start = end + 1
+    start = end
     end = start + solution[start:].index(0) + 1
     route = solution[start:end]
     # if route demand is greater than truck capacity, this solution is not ok
     route_demand = sum([nodes[client_id].demand for client_id in route])
+    # if verbose: print("route: %s, demand: %s" % (route, route_demand))
     if route_demand > capacity: return False
     # print("start = %s, end = %s, route_cost = %s" % (start, end, route_demand))
   # all routes are below truck capacity, solution ok

@@ -19,9 +19,9 @@ FINAL_TEMP = 1      # stop condition
 T_FACTOR = 0.99     # decreasing temperature by (1 - T_FACTOR)
 N_FACTOR = 0.7      # neighborhood ratio factor
 
-SIZEFACTOR = 8 
-CUTOFF = 0.2
-FINDIVISOR = 50
+# SIZEFACTOR = 8 
+# CUTOFF = 0.2
+# FINDIVISOR = 50
 
 
 ### DEBUG FUNCTIONS ###
@@ -197,17 +197,16 @@ def cost(solution):
 
 def simulated_annealing():
   T = INITIAL_TEMP
-  N = 2*(len(nodes)**2)
+  N = int(len(nodes)*N_FACTOR)
 
   best = current = generate_initial_solution()
   cost_best = cost_current = cost(current)
 
-  while T >= INITIAL_TEMP/FINDIVISOR:
+  while T > FINAL_TEMP:
     i = 0
-    changes = 0
 
     #local search iteration
-    while i <= SIZEFACTOR*N or changes <= CUTOFF*N:
+    while i < N:
       #generate a new state from the current state
       new = generate_neighbor(current)
       cost_new = cost(new)
@@ -217,7 +216,6 @@ def simulated_annealing():
       if deltaC < 0: #new solution is better than current 
         current = new
         cost_current = cost_new
-        changes += 1
         if cost_new < cost_best: #new solution is best
           best = new
           cost_best = cost_new
@@ -225,7 +223,6 @@ def simulated_annealing():
       elif is_acceptable(deltaC, T):
         current = new
         cost_current = cost_new
-        changes += 1
 
       i += 1
     #decreases temperature

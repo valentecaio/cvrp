@@ -199,8 +199,8 @@ def simulated_annealing():
   T = INITIAL_TEMP
   N = int(len(nodes)*N_FACTOR)
 
-  best = current = initial = generate_initial_solution()
-  cost_best = cost_current = cost_initial = cost(initial)
+  best = current = generate_initial_solution()
+  cost_best = cost_current = cost(current)
 
   while T > FINAL_TEMP:
     i = 0
@@ -242,8 +242,6 @@ def main():
   print("Capacity Q: %s" % capacity)
   print_nodes()
 
-  start_time = time()
-
   # generate initial solution
   solution = generate_initial_solution()
   print("Initial_solution: %s" % solution)
@@ -270,11 +268,12 @@ def main():
   # costSol = cost(solution)
   # print("Cost: %s" % costSol)
 
+
+  start_time = time()
   bestSolution = simulated_annealing()
   print("Best solution: %s" % bestSolution)
   costBest = cost(bestSolution)
   print("best cost: %s" % costBest)
-
   end_time = time()
   print("Took %.3f seconds to execute" % (end_time - start_time))
 

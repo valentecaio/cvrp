@@ -10,14 +10,14 @@ import math
 
 ### GLOBAL VARIABLES ###
 
-nodes = None
-capacity = None
-verbose = False
+nodes = None        # nodes loaded from given file
+capacity = None     # capacity of a truck, override with -q
+verbose = False     # enable logs, override with -v
 
 INITIAL_TEMP = 20
-FINAL_TEMP = 1
-T_FACTOR = 0.95 #decreasing temperature by 0.05
-N_FACTOR = 0.1 #neighborhood ratio factor
+FINAL_TEMP = 1      # stop condition
+T_FACTOR = 0.99     # decreasing temperature by (1 - T_FACTOR)
+N_FACTOR = 0.7      # neighborhood ratio factor
 
 # SIZEFACTOR = 8 
 # CUTOFF = 0.2
@@ -55,7 +55,6 @@ def transf_swap(solution):
     if is_valid_solution(new_solution): break
   return new_solution
 
-
 # move a random element in a given solution to a random new index
 def transf_move(solution):
   while True:
@@ -75,7 +74,6 @@ def transf_move(solution):
     # stop looping when a valid solution is found
     if is_valid_solution(new_solution): break
   return new_solution
-
 
 # invert a random part of a given solution
 def transf_flip(solution):
@@ -192,6 +190,7 @@ def cost(solution):
   for sol in solution[1:]:
     adj_node = nodes[sol]
     cost += node.distance_to_node(adj_node.x, adj_node.y)
+    # print("cost from %s to %s is %s" % (node.id, adj_node.id, cost))
     node = adj_node
   return cost
 

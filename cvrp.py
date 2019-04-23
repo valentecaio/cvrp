@@ -2,7 +2,7 @@
 
 from pprint import pprint
 from cli import parse_args, parse_vrp
-#import plot
+# import plot
 import random
 import math
 from copy import deepcopy
@@ -11,6 +11,7 @@ from copy import deepcopy
 
 nodes = None
 capacity = None
+verbose = False
 
 INITIAL_TEMP = 20
 FINAL_TEMP = 1
@@ -44,7 +45,7 @@ def transf_swap(solution):
     # pick two random indexes in the route,
     # excluding the first and the last, that point to depot
     i1, i2 = random.sample(range(1,len(solution)-2), 2)
-    print("Swapping indexes %s and %s" % (i1, i2))
+    if verbose: print("Swapping indexes %s and %s" % (i1, i2))
 
     # swap them
     new_solution[i1], new_solution[i2] = solution[i2], solution[i1]
@@ -65,7 +66,7 @@ def transf_move(solution):
     i1, i2 = random.sample(range(1, len(solution)-2), 2)
     # i1 must be smaller than i2
     i1, i2 = min(i1, i2), max(i1, i2)
-    #print("Moving value from index %s to index %s" % (i1, i2))
+    if verbose: print("Moving value from index %s to index %s" % (i1, i2))
 
     # move value from index i1 to index i2
     new_solution = solution[:i1] + solution[i1+1:i2] + [solution[i1]] + solution[i2:]
@@ -85,7 +86,7 @@ def transf_flip(solution):
     i1, i2 = random.sample(range(1, len(solution)-2), 2)
     # i1 must be smaller than i2
     i1, i2 = min(i1, i2), max(i1, i2)
-    #print("Inverting solution from index %s to index %s" % (i1, i2))
+    if verbose: print("Inverting solution from index %s to index %s" % (i1, i2))
 
     # invert values from index i1 to index i2
     new_solution = solution[:i1] + solution[i1:i2][::-1] + solution[i2:]
@@ -232,9 +233,10 @@ def simulated_annealing():
 
 def main():
   # set global variables from input
-  global nodes, capacity
-  algorithm, filepath, verbose, cli_capacity = parse_args()
+  global nodes, capacity, verbose
+  algorithm, filepath, cli_verbose, cli_capacity = parse_args()
   nodes, vrp_capacity = parse_vrp(filepath)
+  verbose = cli_verbose if cli_verbose else verbose
   capacity = cli_capacity if cli_capacity else vrp_capacity
   print("Capacity Q: %s" % capacity)
   print_nodes()
@@ -270,8 +272,7 @@ def main():
   costBest = cost(bestSolution)
   print("best cost: %s" % costBest)
 
-  # plot.draw_initial_state(depot, nodes)
-  # plot.draw_results(nodes, initial_solution)
+  # plot.draw_solution(nodes, bestSolution, verbose)
 
 if __name__ == "__main__":
   main()

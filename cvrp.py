@@ -246,7 +246,7 @@ def main():
   solution = generate_initial_solution()
   print("Initial_solution: %s" % solution)
   costSol = cost(solution)
-  print("Cost: %s" % costSol)
+  print("Initial cost: %s" % costSol)
 
   # solution = transf_swap(solution)
   # print("New solution: %s" % solution)

@@ -3,7 +3,7 @@
 from pprint import pprint
 from cli import parse_args, parse_vrp
 from copy import deepcopy
-from time import time
+from time import process_time
 import random
 import math
 import ga
@@ -270,9 +270,9 @@ def main():
   # print("Cost: %s" % costSol)
 
 
-  start_time = time()
+  start_time = process_time()
   bestSolution = simulated_annealing()
-  end_time = time()
+  end_time = process_time()
   costBest = cost(bestSolution)
   print("Best solution: %s" % bestSolution)
   print("Best cost: %s" % costBest)

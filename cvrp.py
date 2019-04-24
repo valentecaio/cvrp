@@ -15,10 +15,10 @@ nodes = None        # nodes loaded from given file
 capacity = None     # capacity of a truck, override with -q
 verbose = False     # enable logs, override with -v
 
-INITIAL_TEMP = 20
+INITIAL_TEMP = 2000000
 FINAL_TEMP = 1      # stop condition
-T_FACTOR = 0.99     # decreasing temperature by (1 - T_FACTOR)
-N_FACTOR = 0.7      # neighborhood ratio factor
+T_FACTOR = 0.9      # decreasing temperature by (1 - T_FACTOR)
+N_FACTOR = 0.9      # neighborhood ratio factor
 
 # SIZEFACTOR = 8 
 # CUTOFF = 0.2
@@ -34,66 +34,42 @@ def print_nodes():
 
 ### TRANSFORMATION FUNCTIONS ###
 
-# all the transformation functions below assure that their output
-# are valid solutions, which means, their output contain only
-# routes whose total demand is below a truck capacity
-
 # swap two random elements in a given solution
 def transf_swap(solution):
-  while True:
-    # keep original values
-    new_solution = deepcopy(solution)
+  # keep original values
+  new_solution = deepcopy(solution)
 
-    # pick two random indexes in the route,
-    # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1,len(solution)-2), 2)
-    if verbose: print("Swapping indexes %s and %s" % (i1, i2))
+  # pick two random indexes in the route,
+  # excluding the first and the last, that point to depot
+  i1, i2 = random.sample(range(1,len(solution)-2), 2)
+  if verbose: print("Swapping indexes %s and %s" % (i1, i2))
 
-    # swap them
-    new_solution[i1], new_solution[i2] = solution[i2], solution[i1]
-
-    # stop looping when a valid solution is found
-    if is_valid_solution(new_solution): break
+  # swap them
+  new_solution[i1], new_solution[i2] = solution[i2], solution[i1]
   return new_solution
 
 # move a random element in a given solution to a random new index
 def transf_move(solution):
-  while True:
-    # keep original values
-    new_solution = deepcopy(solution)
+  # pick two random indexes in the route,
+  # excluding the first and the last, that point to depot
+  i1, i2 = random.sample(range(1, len(solution)-2), 2)
+  # i1 must be smaller than i2
+  i1, i2 = min(i1, i2), max(i1, i2)
+  if verbose: print("Moving value from index %s to index %s" % (i1, i2))
 
-    # pick two random indexes in the route,
-    # excluding the first and the last, that point to depot
-    i1, i2 = random.sample(range(1, len(solution)-2), 2)
-    # i1 must be smaller than i2
-    i1, i2 = min(i1, i2), max(i1, i2)
-    if verbose: print("Moving value from index %s to index %s" % (i1, i2))
-
-    # move value from index i1 to index i2
-    new_solution = solution[:i1] + solution[i1+1:i2] + [solution[i1]] + solution[i2:]
-
-    # stop looping when a valid solution is found
-    if is_valid_solution(new_solution): break
-  return new_solution
+  # move value from index i1 to index i2
+  return solution[:i1] + solution[i1+1:i2] + [solution[i1]] + solution[i2:]
 
 # invert a random part of a given solution
 def transf_flip(solution):
-  while True:
-    # keep original values
-    new_solution = deepcopy(solution)
+  # pick two random indexes in the route
+  i1, i2 = random.sample(range(1, len(solution)-2), 2)
+  # i1 must be smaller than i2
+  i1, i2 = min(i1, i2), max(i1, i2)
+  if verbose: print("Inverting solution from index %s to index %s" % (i1, i2))
 
-    # pick two random indexes in the route
-    i1, i2 = random.sample(range(1, len(solution)-2), 2)
-    # i1 must be smaller than i2
-    i1, i2 = min(i1, i2), max(i1, i2)
-    if verbose: print("Inverting solution from index %s to index %s" % (i1, i2))
-
-    # invert values from index i1 to index i2
-    new_solution = solution[:i1] + solution[i1:i2][::-1] + solution[i2:]
-
-    # stop looping when a valid solution is found
-    if is_valid_solution(new_solution): break
-  return new_solution
+  # invert values from index i1 to index i2
+  return solution[:i1] + solution[i1:i2][::-1] + solution[i2:]
 
 
 ### ALGORITHM FUNCTIONS ###
@@ -204,8 +180,12 @@ def simulated_annealing():
     while i < N:
       #generate a new state from the current state
       new = generate_neighbor(current)
-      cost_new = cost(new)
 
+      # skip invalid solutions
+      if not is_valid_solution(new): continue
+
+      # calculate cost delts
+      cost_new = cost(new)
       deltaC = cost_new - cost_current
 
       if deltaC < 0: #new solution is better than current 

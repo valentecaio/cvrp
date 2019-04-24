@@ -175,14 +175,8 @@ def is_acceptable(delta, T):
 
 def generate_neighbor(solution):
   #apply randomly one of the three rules
-  opt = random.randint(0, 2)
-  #print("opt= %d" % opt)
-  if opt == 0:
-    return transf_swap(solution)
-  elif opt == 1:
-    return transf_move(solution)
-  else:
-    return transf_flip(solution)
+  opts = [transf_swap, transf_move, transf_flip]
+  return opts[random.randint(0, 2)](solution)
 
 
 def cost(solution):

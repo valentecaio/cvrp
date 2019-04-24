@@ -1,7 +1,6 @@
 import random
 import math
 
-
 POPULATION_SIZE = 50
 population = []
 
@@ -63,7 +62,7 @@ def crossover(P1, P2):
 		start = pos
 		pos = -1
 		for i in range(start, size):
-			if !visited[i] 
+			if not visited[i]:
 				pos = i
 				break
 		#all cycles have been found if 'visited' vector is all True

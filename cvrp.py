@@ -6,6 +6,7 @@ from copy import deepcopy
 from time import time
 import random
 import math
+import ga
 # import plot
 
 ### GLOBAL VARIABLES ###

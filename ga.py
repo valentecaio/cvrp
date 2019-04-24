@@ -27,24 +27,53 @@ def two_opt(route):
           route = best
      return best
 
-
 #cycle crossover
 def crossover(P1, P2):
+	size = len(P1)
+	child1 = [None]*size
+	child2 = [None]*size
+	visited = [False]*size
 	cycles = []
+	positions = []
 	pos = 0
 
-	first_gene_P1 = P1[pos]
-	cycle = []
-	while True:
-		cycle.append(P1[pos])
-		gene_in_P2 = P2[pos]
-		for i in range(0, len(P1)):
-			if P1[i] == gene_in_P2:
+	#find all cycles
+	while pos >= 0:
+		first_gene_P1 = P1[pos]
+		cycle = []
+		position = []
+
+		while True:
+			cycle.append(P1[pos])
+			position.append(pos)
+			visited[pos] = True
+
+			gene_in_P2 = P2[pos]
+			for i in range(0, size):
+				if P1[i] == gene_in_P2:
+					pos = i
+					break
+			if P1[pos] == first_gene_P1:
+				break #cycle is closed
+
+		cycles.append(cycle)
+		positions.append(position)
+	
+		#search for next unvisited gene
+		start = pos
+		pos = -1
+		for i in range(start, size):
+			if !visited[i] 
 				pos = i
 				break
-		if P1[pos] == first_gene_P1:
-			break
+		#all cycles have been found if 'visited' vector is all True
 
+	#fill childs with cycle sequence
+	for cycle, position in zip(cycles, positions):
+		for i in range(0, len(cycle), 2):
+			child1[position[i]] = cycle[i]
+		for i in range(1, len(cycle), 2):
+			child2[position[i]] = cycle[i]
 
 
 def apply_mutation(chromosome):

@@ -20,11 +20,6 @@ FINAL_TEMP = 1      # stop condition
 T_FACTOR = 0.9      # decreasing temperature by (1 - T_FACTOR)
 N_FACTOR = 0.9      # neighborhood ratio factor
 
-# SIZEFACTOR = 8 
-# CUTOFF = 0.2
-# FINDIVISOR = 50
-
-
 ### DEBUG FUNCTIONS ###
 
 def print_nodes():
@@ -200,7 +195,7 @@ def simulated_annealing():
         cost_current = cost_new
 
       i += 1
-    #current = best
+    current = best
     #decreases temperature
     T *= T_FACTOR
   return best
@@ -244,14 +239,17 @@ def main():
   # costSol = cost(solution)
   # print("Cost: %s" % costSol)
 
+  opt = 1221
 
   start_time = process_time()
   bestSolution = simulated_annealing()
   end_time = process_time()
   costBest = cost(bestSolution)
   #print("Best solution: %s" % bestSolution)
-  print("Best cost: %s" % costBest)
+  print("Best cost: %d" % costBest)
   print("Took %.3f seconds to execute" % (end_time - start_time))
+
+  print("Relative dif=  %.3f" % ((costBest - opt)*100 / costBest))
 
   # plot.draw_solution(nodes, solution, verbose)
 

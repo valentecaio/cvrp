@@ -226,6 +226,7 @@ def simulated_annealing():
         cost_current = cost_new
 
       i += 1
+    #current = best
     #decreases temperature
     T *= T_FACTOR
   return best
@@ -240,12 +241,12 @@ def main():
   nodes, vrp_capacity = parse_vrp(filepath)
   verbose = cli_verbose if cli_verbose else verbose
   capacity = cli_capacity if cli_capacity else vrp_capacity
-  print("Capacity Q: %s" % capacity)
-  print_nodes()
+  # print("Capacity Q: %s" % capacity)
+  # print_nodes()
 
   # generate initial solution
   solution = generate_initial_solution()
-  print("Initial_solution: %s" % solution)
+  #print("Initial_solution: %s" % solution)
   costSol = cost(solution)
   print("Initial cost: %s" % costSol)
 
@@ -274,11 +275,22 @@ def main():
   bestSolution = simulated_annealing()
   end_time = time()
   costBest = cost(bestSolution)
-  print("Best solution: %s" % bestSolution)
+  #print("Best solution: %s" % bestSolution)
   print("Best cost: %s" % costBest)
   print("Took %.3f seconds to execute" % (end_time - start_time))
 
   # plot.draw_solution(nodes, solution, verbose)
+
+
+  ###GA TESTING###
+  P1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  P2 = [9, 3, 7, 8, 2, 6, 5, 1, 4]
+
+  child1, child2 = ga.crossover(P1, P2)
+  #print("\nChild 1:\n")
+  #pprint(child1)
+  #print("\nChild 2:\n")
+  #pprint(child2)
 
 if __name__ == "__main__":
   main()

@@ -1,5 +1,6 @@
 import random
 import math
+from pprint import pprint
 
 POPULATION_SIZE = 50
 population = []
@@ -29,8 +30,9 @@ def two_opt(route):
 #cycle crossover
 def crossover(P1, P2):
 	size = len(P1)
-	child1 = [None]*size
-	child2 = [None]*size
+	childs = []
+	childs.append([None]*size)
+	childs.append([None]*size)
 	visited = [False]*size
 	cycles = []
 	positions = []
@@ -54,7 +56,10 @@ def crossover(P1, P2):
 					break
 			if P1[pos] == first_gene_P1:
 				break #cycle is closed
-
+		# print("cycle= ")
+		# pprint(cycle)
+		# print("position= ")
+		# pprint(position)
 		cycles.append(cycle)
 		positions.append(position)
 	
@@ -68,11 +73,15 @@ def crossover(P1, P2):
 		#all cycles have been found if 'visited' vector is all True
 
 	#fill childs with cycle sequence
-	for cycle, position in zip(cycles, positions):
-		for i in range(0, len(cycle), 2):
-			child1[position[i]] = cycle[i]
-		for i in range(1, len(cycle), 2):
-			child2[position[i]] = cycle[i]
+	for i in range(0,len(positions)):
+		position = positions[i]
+		idx1 = i%2
+		idx2 = abs(idx1 - 1)
+		for pos in position:
+			childs[idx1][pos] = P1[pos]
+			childs[idx2][pos] = P2[pos]
+
+	return childs[0], childs[1]
 
 
 def apply_mutation(chromosome):

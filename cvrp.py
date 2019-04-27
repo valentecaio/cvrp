@@ -42,11 +42,13 @@ def main():
   print_nodes()
 
   # generate initial solution
-  solution = initial_solution.greedy_in_single_list_format(nodes, capacity)
-  print("Initial_solution: %s" % solution)
-  # print_solution(solution)
+  annealing_solution = initial_solution.greedy(nodes, capacity, 'annealing')
+  print("Initial_solution: %s" % annealing_solution)
+  
+  local_search_solution = initial_solution.greedy(nodes, capacity, 'local_search')
+  print_solution(local_search_solution)
 
-  costSol = simulated_annealing.solution_cost(solution, nodes)
+  costSol = simulated_annealing.solution_cost(annealing_solution, nodes)
   print("Initial cost: %s" % costSol)
 
   start_time = process_time()
@@ -61,6 +63,7 @@ def main():
   print("Relative dif=  %.3f" % ((costBest - opt)*100 / costBest))
 
   # # plot.draw_solution(nodes, solution, verbose)
+
 
 if __name__ == "__main__":
   main()

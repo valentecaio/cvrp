@@ -1,7 +1,8 @@
 from classes import Route
+from copy import deepcopy
 
 # greedy algorithm that generates a valid initial solution
-def greedy(nodes, capacity):
+def greedy(nodes, capacity, algorithm = 'default'):
   depot = nodes[0]
 
   # initial state
@@ -55,11 +56,63 @@ def greedy(nodes, capacity):
 
     # store route data
     routes.append(route)
-  return routes
+
+  # format output according to algorithm
+  if algorithm == 'annealing':
+    return format_to_annealing(routes)
+  elif algorithm == 'local_search':
+    return format_to_local_search(routes)
+  else:
+    return routes
 
 
-def greedy_in_single_list_format(nodes, capacity):
-  solution = greedy(nodes, capacity)
+'''
+input is a list of Routes starting and ending in 0:
+[
+  Route - cost: 158 - path: [0, 21, 16, 18, 25, 5, 4, 29, 8, 11, 0],
+  Route - cost: 115 - path: [0, 28, 26, 12, 23, 7, 6, 0],
+  Route - cost: 240 - path: [0, 22, 9, 13, 17, 30, 3, 2, 0],
+  Route - cost: 244 - path: [0, 24, 19, 1, 15, 14, 10, 20, 0],
+  Route - cost: 188 - path: [0, 27, 0]
+]
+
+output is a list of Routes without zeros:
+[
+  Route - cost: 158 - path: [21, 16, 18, 25, 5, 4, 29, 8, 11],
+  Route - cost: 115 - path: [28, 26, 12, 23, 7, 6],
+  Route - cost: 240 - path: [22, 9, 13, 17, 30, 3, 2],
+  Route - cost: 244 - path: [24, 19, 1, 15, 14, 10, 20],
+  Route - cost: 188 - path: [27]
+]
+
+'''
+def format_to_local_search(solution):
+  for route in solution:
+    # remove zeros
+    route.path = route.path[1:-1]
+  return solution
+
+
+'''
+input is a list of Routes starting and ending in 0:
+[
+  Route - cost: 158 - path: [0, 21, 16, 18, 25, 5, 4, 29, 8, 11, 0],
+  Route - cost: 115 - path: [0, 28, 26, 12, 23, 7, 6, 0],
+  Route - cost: 240 - path: [0, 22, 9, 13, 17, 30, 3, 2, 0],
+  Route - cost: 244 - path: [0, 24, 19, 1, 15, 14, 10, 20, 0],
+  Route - cost: 188 - path: [0, 27, 0]
+]
+
+output is a simple list of integers:
+[
+  0, 21, 16, 18, 25, 5, 4, 29, 8, 11,
+  0, 28, 26, 12, 23, 7, 6,
+  0, 22, 9, 13, 17, 30, 3, 2,
+  0, 24, 19, 1, 15, 14, 10, 20,
+  0, 27, 0
+]
+'''
+def format_to_annealing(solution):
   solution_as_list = [0]
   for route in solution:
     solution_as_list += route.path[1:]

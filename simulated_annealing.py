@@ -103,7 +103,7 @@ def simulated_annealing(nodes, capacity):
   T = INITIAL_TEMP
   N = int(len(nodes)*N_FACTOR)
 
-  best = current = initial_solution.greedy_in_single_list_format(nodes, capacity)
+  best = current = initial_solution.greedy(nodes, capacity, 'annealing')
   cost_best = cost_current = solution_cost(current, nodes)
 
   while T > FINAL_TEMP:

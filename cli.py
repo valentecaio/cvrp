@@ -4,7 +4,8 @@ from classes import Node
 # returns a substring of s that starts right after flag_start and
 # ends right before flag_end
 def extract_section(s, flag_start, flag_end):
-  return s[s.find(flag_start)+len(flag_start):s.find(flag_end)]
+  # replace tab by spaces to ensure output format
+  return s[s.find(flag_start)+len(flag_start):s.find(flag_end)].replace('\t',' ')
 
 # read vrp file; returns clients and depot data
 def parse_vrp(filepath):

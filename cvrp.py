@@ -10,6 +10,7 @@ import math
 import ga
 import initial_solution
 import simulated_annealing
+import local_search
 # import plot
 
 ### GLOBAL VARIABLES ###
@@ -60,17 +61,6 @@ def main():
   print("Relative dif=  %.3f" % ((costBest - opt)*100 / costBest))
 
   # # plot.draw_solution(nodes, solution, verbose)
-
-
-  # ###GA TESTING###
-  # P1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  # P2 = [9, 3, 7, 8, 2, 6, 5, 1, 4]
-
-  # child1, child2 = ga.crossover(P1, P2)
-  # #print("\nChild 1:\n")
-  # #pprint(child1)
-  # #print("\nChild 2:\n")
-  # #pprint(child2)
 
 if __name__ == "__main__":
   main()

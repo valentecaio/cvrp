@@ -23,3 +23,4 @@ class Route:
 
   def __repr__(self):
     return "Route - cost: %s - path: %s" % (self.cost, self.path)
+

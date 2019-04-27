@@ -87,7 +87,6 @@ def generate_initial_solution():
   # initial state
   clients_to_visit = [node.id for node in nodes[1:]]
   routes = []
-  total_cost = 0
 
   while len(clients_to_visit) > 0:
     # create a truck to visit nodes that have not been visited before
@@ -95,7 +94,7 @@ def generate_initial_solution():
     truck_position = 0
     # create empty route starting in 0
     route = Route()
-
+ 
     # truck looping
     while True:
       # calculate costs
@@ -124,9 +123,10 @@ def generate_initial_solution():
 
       # go to next node and update state
       route.path.append(next_node.id)
+      route.cost += cost_to_next_node
       truck_capacity -= next_node.demand
       truck_position = next_node.id
-      total_cost += cost_to_next_node
+
       if next_node.id in clients_to_visit:
         clients_to_visit.remove(next_node.id)
 
@@ -134,7 +134,6 @@ def generate_initial_solution():
       if truck_position == depot.id: break
 
     # store route data
-    route.cost = total_cost
     routes.append(route)
   return routes
 

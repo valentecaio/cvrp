@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from pprint import pprint
-from cli import parse_args, parse_vrp
+from parser import parse_args, parse_vrp
 from copy import deepcopy
 from time import process_time
 import random

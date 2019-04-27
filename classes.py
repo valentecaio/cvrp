@@ -16,3 +16,10 @@ class Node:
     # cast to int to avoid working with floats
     return int( ( (self.x - x)**2 + (self.y - y)**2 )**.5 )
 
+class Route:
+  def __init__(self):
+    self.path = [0]
+    self.cost = 0
+
+  def __repr__(self):
+    return "Route - cost: %s - path: %s" % (self.cost, self.path)

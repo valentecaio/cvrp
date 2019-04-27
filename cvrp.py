@@ -34,50 +34,53 @@ def print_solution(solution):
 
 ### TRANSFORMATION FUNCTIONS ###
 
-# swap two random elements in a given route
-def transf_swap(route):
+# swap two random elements in a given path
+def transf_swap(path):
   # keep original values
-  new_route = deepcopy(route)
+  new_path = deepcopy(path)
 
-  # pick two random indexes in the route,
+  # pick two random indexes in the path,
   # excluding the first and the last, that point to depot
-  i1, i2 = random.sample(range(1,len(route)-2), 2)
+  i1 = random.randint(1, len(path)-2)
+  i2 = random.randint(1, len(path)-2)
   if verbose: print("Swapping indexes %s and %s" % (i1, i2))
 
   # swap them
-  new_route[i1], new_route[i2] = route[i2], route[i1]
-  return new_route
+  new_path[i1], new_path[i2] = path[i2], path[i1]
+  return new_path
 
-# move a random element in a given route to a random new index
-def transf_move(route):
-  # pick two random indexes in the route,
+# move a random element in a given path to a random new index
+def transf_move(path):
+  # pick two random indexes in the path,
   # excluding the first and the last, that point to depot
-  i1, i2 = random.sample(range(1, len(route)-2), 2)
+  i1 = random.randint(1, len(path)-2)
+  i2 = random.randint(1, len(path)-2)
   # i1 must be smaller than i2
   i1, i2 = min(i1, i2), max(i1, i2)
   if verbose: print("Moving value from index %s to index %s" % (i1, i2))
 
   # move value from index i1 to index i2
-  return route[:i1] + route[i1+1:i2] + [route[i1]] + route[i2:]
+  return path[:i1] + path[i1+1:i2] + [path[i1]] + path[i2:]
 
-# invert a random part of a given route
-def transf_flip(route):
-  # pick two random indexes in the route
-  i1, i2 = random.sample(range(1, len(route)-2), 2)
+# invert a random part of a given path
+def transf_flip(path):
+  # pick two random indexes in the path
+  i1 = random.randint(1, len(path)-2)
+  i2 = random.randint(1, len(path)-2)
   # i1 must be smaller than i2
   i1, i2 = min(i1, i2), max(i1, i2)
-  if verbose: print("Inverting route from index %s to index %s" % (i1, i2))
+  if verbose: print("Inverting path from index %s to index %s" % (i1, i2))
 
   # invert values from index i1 to index i2
-  return route[:i1] + route[i1:i2][::-1] + route[i2:]
+  return path[:i1] + path[i1:i2][::-1] + path[i2:]
 
 
 ### ALGORITHM FUNCTIONS ###
 
-def is_valid_route(route):
-  # if route demand is greater than truck capacity, this solution is not ok
-  route_demand = sum([nodes[client_id].demand for client_id in route])
-  return route_demand > capacity
+def is_valid_path(path):
+  # if path demand is greater than truck capacity, this solution is not ok
+  path_demand = sum([nodes[client_id].demand for client_id in path])
+  return path_demand > capacity
 
 
 # greedy algorithm that generates a valid initial solution
@@ -93,7 +96,7 @@ def generate_initial_solution():
     truck_capacity = capacity
     truck_position = 0
     # create empty route starting in 0
-    route = Route()
+    route = Route([0], 0)
  
     # truck looping
     while True:
@@ -146,9 +149,19 @@ def is_acceptable(delta, T):
 def generate_neighbor(solution):
   #apply randomly one of the three rules
   opts = [transf_swap, transf_move, transf_flip]
+  # limit it to 50x to avoid infinite loops
   for _i in range(0, 50):
-    new_solution = opts[random.randint(0, 2)](solution)
-    if is_valid_solution(new_solution): break
+    # sort a route to be transformed
+    route_index = random.randint(0, len(solution)-1)
+    # apply transformation function
+    new_path = random.choice(opts)(solution[route_index].path)
+
+    # ignore invalid paths
+    if is_valid_path(new_path):
+      # generate new solution discardind old route and inserting new one
+      new_route = Route(new_path, path_cost(new_path))
+      new_solution = solution[:route_index] + [new_route] + solution[route_index + 1:]
+      break
   else:
     # if the loop ran for 50x without finding a valid solution
     # stop and return the normal solution
@@ -156,7 +169,18 @@ def generate_neighbor(solution):
   return new_solution
 
 
-def cost(solution):
+def path_cost(path):
+  cost = 0
+  node = nodes[0]
+  for node_id in path[1:]:
+    adj_node = nodes[node_id]
+    cost += node.distance_to_node(adj_node.x, adj_node.y)
+    # print("cost from %s to %s is %s" % (node.id, adj_node.id, cost))
+    node = adj_node
+  return cost
+
+
+def solution_cost(solution):
   return sum(route.cost for route in solution)
 
 
@@ -165,7 +189,7 @@ def simulated_annealing():
   N = int(len(nodes)*N_FACTOR)
 
   best = current = generate_initial_solution()
-  cost_best = cost_current = cost(current)
+  cost_best = cost_current = solution_cost(current)
 
   while T > FINAL_TEMP:
     i = 0
@@ -176,7 +200,7 @@ def simulated_annealing():
       new = generate_neighbor(current)
 
       # calculate cost delts
-      cost_new = cost(new)
+      cost_new = solution_cost(new)
       deltaC = cost_new - cost_current
 
       if deltaC < 0: #new solution is better than current 
@@ -207,41 +231,28 @@ def main():
   verbose = cli_verbose if cli_verbose else verbose
   capacity = cli_capacity if cli_capacity else vrp_capacity
   # print("Capacity Q: %s" % capacity)
-  # print_nodes()
+  print_nodes()
 
   # generate initial solution
   solution = generate_initial_solution()
   #print("Initial_solution: %s" % solution)
-  costSol = cost(solution)
-  print("Initial cost: %s" % costSol)
   print_solution(solution)
+  costSol = solution_cost(solution)
+  print("Initial cost: %s" % costSol)
 
-  # solution = transf_swap(solution)
-  # print("New solution: %s" % solution)
-  # costSol = cost(solution)
-  # print("Cost: %s" % costSol)
+  solution = generate_neighbor(solution)
+  print_solution(solution)
+  costSol = solution_cost(solution)
+  print("Cost: %s" % costSol)
 
-  # solution = transf_move(solution)
-  # print("New solution: %s" % solution)
-  # costSol = cost(solution)
-  # print("Cost: %s" % costSol)
 
-  # solution = transf_flip(solution)
-  # print("New solution: %s" % solution)
-  # costSol = cost(solution)
-  # print("Cost: %s" % costSol)
-
-  # solution = generate_neighbor(solution)
-  # print("New neighbor: %s" % solution)
-  # costSol = cost(solution)
-  # print("Cost: %s" % costSol)
 
   # opt = 1221
 
   # start_time = process_time()
   # bestSolution = simulated_annealing()
   # end_time = process_time()
-  # costBest = cost(bestSolution)
+  # costBest = solution_cost(bestSolution)
   # #print("Best solution: %s" % bestSolution)
   # print("Best cost: %d" % costBest)
   # print("Took %.3f seconds to execute" % (end_time - start_time))

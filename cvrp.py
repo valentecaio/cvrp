@@ -157,15 +157,7 @@ def generate_neighbor(solution):
 
 
 def cost(solution):
-  cost = 0
-  for route in solution:
-    node = nodes[route.path[0]]
-    for node_id in route.path[1:]:
-      adj_node = nodes[node_id]
-      cost += node.distance_to_node(adj_node.x, adj_node.y)
-      # print("cost from %s to %s is %s" % (node.id, adj_node.id, cost))
-      node = adj_node
-  return cost
+  return sum(route.cost for route in solution)
 
 
 def simulated_annealing():

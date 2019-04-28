@@ -1,5 +1,6 @@
 from copy import deepcopy
 from pprint import pprint
+from constants import LOOP_LIMIT
 
 def is_valid_path(path, nodes, capacity):
   # if path demand is greater than truck capacity, this solution is not ok
@@ -61,7 +62,6 @@ def move(solution, r1, r2, i, j):
   return new
 
 def successor_inter_routes(in_solution, capacity, nodes):
-  print("len solution= %d" % len(in_solution))
   costIn = solution_cost(in_solution)
   for r1 in range(0, len(in_solution)):
     for r2 in range(r1+1, len(in_solution)):
@@ -76,14 +76,13 @@ def successor_inter_routes(in_solution, capacity, nodes):
             continue
 
           costval = cost(neighbor, [r1,r2], nodes)
-          print("cost= %d" % costval)
+          #print("cost= %d" % costval)
           if costval < costIn:
             return neighbor #returns first neighbor better than current 
 
   return in_solution #no new combination is better -> returns original
 
 def local_search(nodes, capacity, initial_solution_func):
-  LOOP_LIMIT = 1000
   current = initial_solution_func(nodes, capacity)
   #pprint(current)
   i = 0

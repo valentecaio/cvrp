@@ -14,6 +14,8 @@ N_FACTOR = 0.9      # neighborhood ratio factor
 
 #### LOCAL SEARCH CONSTANTS ####
 
+LOOP_LIMIT = 1000
+RANDOM_START = 20
 
 #### MODULE FUNCTIONS ####
 

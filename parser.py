@@ -64,6 +64,8 @@ def parse_cli_args():
 def parse_optimal_solutions():
   # read whole file and split by lines
   lines = open("vrp/inputs_optimal.csv").read().split("\n")
+  # remove empty lines
+  lines.remove('')
   # return a dict with {key: value} = {vrp_name: vrp_optimal_solution}
   return dict(line.split(";") for line in lines)
 

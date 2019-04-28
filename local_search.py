@@ -61,6 +61,7 @@ def move(solution, r1, r2, i, j):
 
   return new
 
+#returns the first improved neighbor by moving one client from one route to another
 def successor_inter_routes(in_solution, capacity, nodes):
   costIn = solution_cost(in_solution)
   for r1 in range(0, len(in_solution)):
@@ -89,20 +90,20 @@ def local_search(nodes, capacity, initial_solution = None, initial_solution_func
     initial_solution = initial_solution_func(nodes, capacity, 'local_search')
 
   current = initial_solution
-  #pprint(current)
   i = 0
   while i < LOOP_LIMIT:
     i += 1
     neighbor1 = successor_inter_routes(current, capacity, nodes)
     neighbor2 = successor_intra_routes(current, nodes)
     #pick the best neighbor
-    #print("cost neighbor1= %d cost neighbor2= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
+    print("cost neighbor(inter)= %d cost neighbor(intra)= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
     neighbor = neighbor1 if solution_cost(neighbor1) < solution_cost(neighbor2) else neighbor2
     #if there is no improvements
     if solution_cost(neighbor) >= solution_cost(current):
       break
     #moves
     current = neighbor
+
 
   return current
 

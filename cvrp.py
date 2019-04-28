@@ -5,7 +5,7 @@ from time import process_time
 from constants import print_constants
 import initial_solution
 import parser
-import simulated_annealing
+import annealing
 import local_search
 # import plot
 
@@ -34,8 +34,8 @@ def main():
 
   # select algorithm
   if algorithm == "annealing":
-    cost_func = simulated_annealing.solution_cost
-    alg_func = simulated_annealing.simulated_annealing
+    cost_func = annealing.solution_cost
+    alg_func = annealing.annealing
   elif algorithm == "local_search":
     cost_func = local_search.solution_cost
     alg_func = local_search.local_search
@@ -59,12 +59,6 @@ def main():
 
 
   print("\n\n############## INITIAL SOLUTION ##############\n\n")
-
-  solution = initial_solution.naive(nodes, capacity, algorithm)
-  initial_cost = cost_func(solution, nodes)
-  print("Naive initial solution: %s" % solution)
-  print("Naive initial solution cost: %s" % initial_cost)
-
 
   # generate initial solution
   solution = initial_solution_func(nodes, capacity, algorithm)

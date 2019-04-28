@@ -87,7 +87,7 @@ def solution_cost(solution, nodes):
   return cost
 
 
-def simulated_annealing(nodes, capacity):
+def annealing(nodes, capacity):
   T = INITIAL_TEMP
   N = int(len(nodes)*N_FACTOR)
 

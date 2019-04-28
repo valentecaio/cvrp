@@ -19,9 +19,13 @@ def print_nodes(nodes):
   print("Nodes:")
   pprint(nodes)
 
-def print_solution(solution):
-  print("Solution:")
-  pprint(solution)
+def print_solution(header, solution):
+  try:
+    int(solution[0])
+    print("%s: %s" % (header, solution) )
+  except TypeError:
+    print("%s:" % header)
+    pprint(solution)
 
 def percent(a, b):
   return 100 * (a - b) / a
@@ -68,9 +72,8 @@ def main():
   # generate initial solution
   initial_solution = initial_solution_func(nodes, capacity, algorithm)
   initial_cost = cost_func(initial_solution, nodes)
-  print("Initial solution: %s" % initial_solution)
+  print_solution("Initial solution:", initial_solution)
   print("Initial solution cost: %s" % initial_cost)
-
 
 
   print("\n\n############## ALGORITHM RUN OUTPUT ##############\n\n")
@@ -104,8 +107,8 @@ def main():
     min_cost = min(min_cost, final_cost)
 
     print("\n# RUNNING INSTANCE %s #\n" % str(i+1))
-    print("Final solution: %s" % final_solution)
-    print("Final cost: %d" % final_cost)
+    print_solution("Final solution:", final_solution)
+    print("Final solution cost: %d" % final_cost)
     print("This solution costs %.2f percent MORE than the optimal" % cost_diff_optimal)
     print("This solution costs %.2f percent LESS than the initial" % cost_diff_initial)
     print("Took %.3f seconds to execute" % time_diff)
@@ -131,7 +134,7 @@ def main():
     print("The %s solution costs %.2f percent MORE than the OPTIMAL solution" % (analysis, cost_diff_optimal) )
     print("The %s solution costs %.2f percent LESS than the INITIAL solution" % (analysis, cost_diff_initial) )
 
-  print("\nBest solution: %s" % best_solution)
+  print_solution("\nBest solution:", best_solution)
 
   print("\n\n")
   if PLOT:

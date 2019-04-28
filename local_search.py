@@ -82,8 +82,12 @@ def successor_inter_routes(in_solution, capacity, nodes):
 
   return in_solution #no new combination is better -> returns original
 
-def local_search(nodes, capacity, initial_solution_func):
-  current = initial_solution_func(nodes, capacity)
+def local_search(nodes, capacity, initial_solution = None, initial_solution_func = None):
+  # use given initial solution or create one
+  if initial_solution == None:
+    initial_solution = initial_solution_func(nodes, capacity, 'annealing')
+
+  current = initial_solution
   #pprint(current)
   i = 0
   while i < LOOP_LIMIT:

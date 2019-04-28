@@ -16,7 +16,7 @@ def path_cost(path, nodes):
 
   return cost
 
-def cost(solution, routes):
+def cost(solution, routes, nodes):
   #recalculate all cost for the given modified routes
   for r in routes:
     solution[r].cost = path_cost(solution[r].path, nodes)
@@ -49,46 +49,42 @@ def successor_intra_routes(in_solution):
 
 #moves the client of position i in route1 to position j in route2
 def move(solution, r1, r2, i, j):
-  route1 = solution[r1]
-  route2 = solution[r2]
+  new = deepcopy(in_solution)
+  route1 = new[r1]
+  route2 = new[r2]
 
   route2.insert(j, route1[i])
   route1.remove(route1[i])
 
-  return solution
+  return new
 
-def successor_inter_routes(in_solution):
-  #best solution = input_solution
-  costIn = cost(in_solution)
-  for r1 in range(0, routes):
-    for r2 in range(r1+1, routes):
-      for i in range(0, len(routes[r1])):
-        for j in range(i+1, len(routes[r2])):
-          neighbor = deepcopy(in_solution)
-          #apply move transformation
+def successor_inter_routes(in_solution, capacity, nodes):
+  costIn = cost_solution(in_solution)
+  for r1 in range(0, in_solution):
+    for r2 in range(r1+1, in_solution):
+      for i in range(0, len(in_solution[r1])):
+        for j in range(i+1, len(in_solution[r2])):
+          #create new neighbor with move transformation
           neighbor = move(neighbor, r1, r2, i, j)
           
-          #check if neighbor is valid -> only need to check the modified routes
-          if not is_valid_path(neighbor[r1], nodes, capacity): continue
+          #check if neighbor is valid -> only need to check the modified route
           if not is_valid_path(neighbor[r2], nodes, capacity): continue
 
-          if cost(neighbor, [r1,r2]) < costIn:
-            return neighbor #returns first neighbor which is better than current 
+          if cost(neighbor, [r1,r2], nodes) < costIn:
+            return neighbor #returns first neighbor that is better than current 
 
-  return in_solution #no combination is better than input
-
-
+  return in_solution #no new combination is better -> returns original
 
 def local_search(nodes, capacity):
   LOOP_LIMIT = 1000
   current = initial_solution.greedy(nodes, capacity)
   while i < LOOP_LIMIT:
     i += 1
-    neighbor1 = successor_inter_routes(current)
+    neighbor1 = successor_inter_routes(current, capacity)
     neighbor2 = successor_intra_routes(current)
     #pick the best neighbor
     neighbor = neighbor1 if neighbor1 < neighbor2 else neighbor2
-    #no improvements
+    #if there is no improvements
     if solution_cost(neighbor) > solution_cost(current.cost):
       break
     #moves

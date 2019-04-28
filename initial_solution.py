@@ -13,7 +13,7 @@ def greedy(nodes, capacity):
     truck_capacity = capacity
     truck_position = 0
     # create empty route starting in 0
-    route = Route([0], 0)
+    route = Route([], 0)
  
     # truck looping
     while True:

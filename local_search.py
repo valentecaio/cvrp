@@ -1,17 +1,20 @@
 from copy import deepcopy
 from pprint import pprint
 from constants import LOOP_LIMIT
+import initial_solution_generator
+import annealing
 
 def is_valid_path(path, nodes, capacity):
   # if path demand is greater than truck capacity, this solution is not ok
   path_demand = sum([nodes[client_id].demand for client_id in path])
-  return path_demand > capacity
+  if path_demand > capacity: return False
+  return True
 
 def path_cost(path, nodes):
   cost = 0
   node = nodes[0]
   route = path + [0] #includes depot
-  #pprint(path)
+  #pprint(route)
   for node_id in route:
     adj_node = nodes[node_id]
     cost += node.distance_to_node(adj_node.x, adj_node.y)
@@ -71,9 +74,10 @@ def successor_inter_routes(in_solution, capacity, nodes):
         for j in range(i+1, len(in_solution[r2].path)):
           #create new neighbor with move transformation
           neighbor = move(in_solution, r1, r2, i, j)
-          
+          #pprint(in_solution[0].path)
           #check if neighbor is valid -> only need to check the modified route
           if not is_valid_path(neighbor[r2].path, nodes, capacity): 
+            #print("not valid")
             continue
 
           costval = cost(neighbor, [r1,r2], nodes)
@@ -95,9 +99,17 @@ def local_search(nodes, capacity, initial_solution = None, initial_solution_func
     i += 1
     neighbor1 = successor_inter_routes(current, capacity, nodes)
     neighbor2 = successor_intra_routes(current, nodes)
+    print("[LS] neighbor(inter)= %d neighbor(intra)= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
     #pick the best neighbor
-    print("cost neighbor(inter)= %d cost neighbor(intra)= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
     neighbor = neighbor1 if solution_cost(neighbor1) < solution_cost(neighbor2) else neighbor2
+    
+    # anneal1 = deepcopy(neighbor1)
+    # anneal2 = deepcopy(neighbor2)
+    # n1 = annealing.solution_cost(initial_solution_generator.format_from_local_search_to_annealing(anneal1), nodes)
+    # n2 = annealing.solution_cost(initial_solution_generator.format_from_local_search_to_annealing(anneal2), nodes)
+
+    # print("[SA] neighbor(inter)= %d neighbor(intra)= %d" % (n1, n2))
+    
     #if there is no improvements
     if solution_cost(neighbor) >= solution_cost(current):
       break

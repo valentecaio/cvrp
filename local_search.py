@@ -1,6 +1,6 @@
 from copy import deepcopy
 from pprint import pprint
-from constants import LOOP_LIMIT
+from constants import LOOP_LIMIT, VERBOSE
 
 def is_valid_path(path, nodes, capacity):
   # if path demand is greater than truck capacity, this solution is not ok
@@ -96,7 +96,7 @@ def local_search(nodes, capacity, initial_solution = None, initial_solution_func
     neighbor1 = successor_inter_routes(current, capacity, nodes)
     neighbor2 = successor_intra_routes(current, nodes)
     #pick the best neighbor
-    print("cost neighbor(inter)= %d cost neighbor(intra)= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
+    if VERBOSE: print("cost neighbor(inter)= %d cost neighbor(intra)= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
     neighbor = neighbor1 if solution_cost(neighbor1) < solution_cost(neighbor2) else neighbor2
     #if there is no improvements
     if solution_cost(neighbor) >= solution_cost(current):

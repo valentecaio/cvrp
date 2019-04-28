@@ -36,10 +36,6 @@ def main():
   optimal_cost = parser.get_optimal_cost(filepath)
   capacity = cli_capacity if cli_capacity else vrp_capacity
 
-  print_solution(initial_solution_generator.greedy(nodes, capacity, 'default'))
-  print_solution(initial_solution_generator.greedy(nodes, capacity, 'local_search'))
-  print_solution(initial_solution_generator.greedy(nodes, capacity, 'annealing'))
-
   # select algorithm
   if algorithm == "annealing":
     cost_func = annealing.solution_cost
@@ -60,6 +56,7 @@ def main():
   print("initial solution algorithm: %s" % initial_solution_algorithm)
   print("truck capacity: %s" % capacity)
   print("filepath: %s" % filepath)
+  print("learn: %s" % learn)
   print("optimal solution cost: %s\n" % optimal_cost)
   print_constants()
   print_nodes(nodes)

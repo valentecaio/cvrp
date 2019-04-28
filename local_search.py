@@ -1,6 +1,8 @@
 import initial_solution
+from copy import deepcopy
 
-def is_valid_path(paths, nodes, capacity):
+
+def is_valid_path(path, nodes, capacity):
   # if path demand is greater than truck capacity, this solution is not ok
   path_demand = sum([nodes[client_id].demand for client_id in path])
   return path_demand > capacity
@@ -91,6 +93,4 @@ def local_search(nodes, capacity):
     current = neighbor
 
   return current
-
-
 

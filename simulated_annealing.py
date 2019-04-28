@@ -1,20 +1,8 @@
-import random
 import math
 import initial_solution
-from copy import deepcopy
 import random
-
-
-### GLOBAL VARIABLES ###
-
-nodes = None        # nodes loaded from given file
-capacity = None     # capacity of a truck, override with -q
-verbose = False     # enable logs
-
-INITIAL_TEMP = 20
-FINAL_TEMP = 1      # stop condition
-T_FACTOR = 0.9      # decreasing temperature by (1 - T_FACTOR)
-N_FACTOR = 0.9      # neighborhood ratio factor
+from copy import deepcopy
+from constants import INITIAL_TEMP, FINAL_TEMP, T_FACTOR, N_FACTOR, VERBOSE
 
 
 ### TRANSFORMATION FUNCTIONS ###
@@ -28,7 +16,7 @@ def transf_swap(solution):
   # excluding the first and the last, that point to depot
   i1 = random.randint(1, len(solution)-2)
   i2 = random.randint(1, len(solution)-2)
-  if verbose: print("Swapping indexes %s and %s" % (i1, i2))
+  if VERBOSE: print("Swapping indexes %s and %s" % (i1, i2))
 
   # swap them
   new_solution[i1], new_solution[i2] = solution[i2], solution[i1]
@@ -42,7 +30,7 @@ def transf_move(solution):
   i2 = random.randint(1, len(solution)-2)
   # i1 must be smaller than i2
   i1, i2 = min(i1, i2), max(i1, i2)
-  if verbose: print("Moving value from index %s to index %s" % (i1, i2))
+  if VERBOSE: print("Moving value from index %s to index %s" % (i1, i2))
 
   # move value from index i1 to index i2
   return solution[:i1] + solution[i1+1:i2] + [solution[i1]] + solution[i2:]
@@ -54,7 +42,7 @@ def transf_flip(solution):
   i2 = random.randint(1, len(solution)-2)
   # i1 must be smaller than i2
   i1, i2 = min(i1, i2), max(i1, i2)
-  if verbose: print("Inverting solution from index %s to index %s" % (i1, i2))
+  if VERBOSE: print("Inverting solution from index %s to index %s" % (i1, i2))
 
   # invert values from index i1 to index i2
   return solution[:i1] + solution[i1:i2][::-1] + solution[i2:]
@@ -103,7 +91,7 @@ def simulated_annealing(nodes, capacity):
   T = INITIAL_TEMP
   N = int(len(nodes)*N_FACTOR)
 
-  best = current = initial_solution.greedy_in_single_list_format(nodes, capacity)
+  best = current = initial_solution.greedy(nodes, capacity, 'annealing')
   cost_best = cost_current = solution_cost(current, nodes)
 
   while T > FINAL_TEMP:

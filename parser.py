@@ -32,20 +32,42 @@ def parse_vrp(filepath):
 
   return nodes, capacity
 
-# parse CLI args
-def parse_args():
+
+def parse_cli_args():
   parser = argparse.ArgumentParser(description='Capacitated Vehicle Routing Problem in Python')
 
   # mandatory args
-  parser.add_argument('algorithm', choices=['1', '2'],
+  parser.add_argument('algorithm', choices=['annealing', 'local_search'],
                       help='Search Algorithm to be used', nargs=1)
-  parser.add_argument('filepath', help='Path of input file', nargs=1)
+  parser.add_argument('initial_solution_algorithm', choices=['greedy', 'naive'],
+                      help='Algorithm used in Initial Solution generation', nargs=1)
+  parser.add_argument('vrp_filepath', help='Path of input file', nargs=1)
 
   # optional args
-  parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
-                      help='execute script in verbose mode')
   parser.add_argument('-q', '--capacity', dest='capacity', type=int,
                       help='override truck capacity')
+  parser.add_argument('-n', '--times-to-run', dest='times_to_run', type=int, default=1,
+                      help='specify how many times the algorithm will be executed')
 
   args = parser.parse_args()
-  return args.algorithm.pop(), args.filepath.pop(), args.verbose, args.capacity
+  return  args.algorithm.pop(),\
+          args.initial_solution_algorithm.pop(),\
+          args.vrp_filepath.pop(),\
+          args.capacity,\
+          args.times_to_run
+
+
+# parse csv file and return optimal solution values
+def parse_optimal_solutions():
+  # read whole file and split by lines
+  lines = open("vrp/inputs_optimal.csv").read().split("\n")
+  # return a dict with {key: value} = {vrp_name: vrp_optimal_solution}
+  return dict(line.split(";") for line in lines)
+
+
+# filename may be "vrp/B-n31-k5.vrp" or "B-n31-k5.vrp"
+def get_optimal_cost(vrp_filepath):
+  bar_index = vrp_filepath.rfind('/')
+  vrp_filename = vrp_filepath[bar_index+1:]
+  return int(parse_optimal_solutions()[vrp_filename])
+

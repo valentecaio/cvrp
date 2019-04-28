@@ -32,8 +32,8 @@ def parse_vrp(filepath):
 
   return nodes, capacity
 
-# parse CLI args
-def parse_args():
+
+def parse_cli_args():
   parser = argparse.ArgumentParser(description='Capacitated Vehicle Routing Problem in Python')
 
   # mandatory args
@@ -49,3 +49,19 @@ def parse_args():
 
   args = parser.parse_args()
   return args.algorithm.pop(), args.filepath.pop(), args.verbose, args.capacity
+
+
+# parse csv file and return optimal solution values
+def parse_optimal_solutions():
+  # read whole file and split by lines
+  lines = open("vrp/inputs_optimal.csv").read().split("\n")
+  # return a dict with {key: value} = {vrp_name: vrp_optimal_solution}
+  return dict(line.split(";") for line in lines)
+
+
+# filename may be "vrp/B-n31-k5.vrp" or "B-n31-k5.vrp"
+def get_optimal_solution_cost(vrp_filepath):
+  bar_index = vrp_filepath.rfind('/')
+  vrp_filename = vrp_filepath[bar_index+1:]
+  return int(parse_optimal_solutions()[vrp_filename])
+

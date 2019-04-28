@@ -1,13 +1,8 @@
 #!/usr/bin/python3
 
 from pprint import pprint
-from parser import parse_args, parse_vrp
-from copy import deepcopy
 from time import process_time
-from classes import Route
-import random
-import math
-import ga
+import parser
 import initial_solution
 import simulated_annealing
 import local_search
@@ -15,13 +10,11 @@ import local_search
 
 ### GLOBAL VARIABLES ###
 
-nodes = None        # nodes loaded from given file
-capacity = None     # capacity of a truck, override with -q
 verbose = False     # enable logs, override with -v
 
 ### DEBUG FUNCTIONS ###
 
-def print_nodes():
+def print_nodes(nodes):
   print("Nodes:")
   pprint(nodes)
 
@@ -32,14 +25,14 @@ def print_solution(solution):
 ### MAIN ###
 
 def main():
-  # set global variables from input
-  global nodes, capacity, verbose
-  algorithm, filepath, cli_verbose, cli_capacity = parse_args()
-  nodes, vrp_capacity = parse_vrp(filepath)
+  global verbose
+  algorithm, filepath, cli_verbose, cli_capacity = parser.parse_cli_args()
+  nodes, vrp_capacity = parser.parse_vrp(filepath)
+  optimal_solution_cost = parser.get_optimal_solution_cost(filepath)
   verbose = cli_verbose if cli_verbose else verbose
   capacity = cli_capacity if cli_capacity else vrp_capacity
 
-  print_nodes()
+  print_nodes(nodes)
 
   # generate initial solution
   annealing_solution = initial_solution.greedy(nodes, capacity, 'annealing')

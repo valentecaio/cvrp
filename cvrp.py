@@ -7,8 +7,11 @@ import initial_solution_generator
 import parser
 import annealing
 import local_search
-if PLOT:
+try:
   import plot
+except ImportError:
+  global PLOT
+  PLOT = False
 
 ### DEBUG FUNCTIONS ###
 

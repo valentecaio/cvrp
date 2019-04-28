@@ -10,7 +10,7 @@ def is_valid_path(path, nodes, capacity):
 def path_cost(path, nodes):
   cost = 0
   node = nodes[0]
-  route = path #includes depot
+  route = path + [0] #includes depot
   #pprint(path)
   for node_id in route:
     adj_node = nodes[node_id]
@@ -30,8 +30,8 @@ def solution_cost(solution, _nodes = None):
   return sum(route.cost for route in solution)
 
 def two_opt(route, nodes):
-  for i in range(0, len(route.path)-1):
-    for j in range(i+1, len(route.path)-1):
+  for i in range(0, len(route.path)):
+    for j in range(i+1, len(route.path)):
       if j-i == 1: continue # changes nothing, skip then
       new_route = deepcopy(route)
       new_route.path = new_route.path[:i] + new_route.path[i:j][::-1] + new_route.path[j:]
@@ -66,8 +66,8 @@ def successor_inter_routes(in_solution, capacity, nodes):
   for r1 in range(0, len(in_solution)):
     for r2 in range(r1+1, len(in_solution)):
       #print("r1= %d r2= %d" % (r1, r2))
-      for i in range(0, len(in_solution[r1].path)-1):
-        for j in range(i+1, len(in_solution[r2].path)-1):
+      for i in range(0, len(in_solution[r1].path)):
+        for j in range(i+1, len(in_solution[r2].path)):
           #create new neighbor with move transformation
           neighbor = move(in_solution, r1, r2, i, j)
           
@@ -83,7 +83,7 @@ def successor_inter_routes(in_solution, capacity, nodes):
   return in_solution #no new combination is better -> returns original
 
 def local_search(nodes, capacity, initial_solution_func):
-  current = initial_solution_func(nodes, capacity)
+  current = initial_solution_func(nodes, capacity, 'local_search')
   #pprint(current)
   i = 0
   while i < LOOP_LIMIT:
@@ -91,7 +91,7 @@ def local_search(nodes, capacity, initial_solution_func):
     neighbor1 = successor_inter_routes(current, capacity, nodes)
     neighbor2 = successor_intra_routes(current, nodes)
     #pick the best neighbor
-    print("cost neighbor1= %d cost neighbor2= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
+    #print("cost neighbor1= %d cost neighbor2= %d" % (solution_cost(neighbor1), solution_cost(neighbor2)))
     neighbor = neighbor1 if solution_cost(neighbor1) < solution_cost(neighbor2) else neighbor2
     #if there is no improvements
     if solution_cost(neighbor) >= solution_cost(current):

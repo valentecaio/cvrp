@@ -7,7 +7,7 @@ import initial_solution_generator
 import parser
 import annealing
 import local_search
-# import plot
+import plot
 
 ### DEBUG FUNCTIONS ###
 
@@ -109,6 +109,7 @@ def main():
   average_time = time_acc / times_to_run
 
   print("The algorithm %s ran for %s times !\n" % (algorithm, times_to_run))
+  print("Total execution time: %.3f seconds" % time_acc)
   print("Average execution time: %.3f seconds" % average_time)
   print("Optimal solution cost: %s" % optimal_cost)
   print("Initial solution cost: %s" % initial_cost)
@@ -125,7 +126,7 @@ def main():
   print("\nBest solution: %s" % best_solution)
 
   print("\n\n")
-  # plot.draw_solution(nodes, solution)
+  plot.draw_solution(nodes, best_solution, algorithm)
 
 
 if __name__ == "__main__":

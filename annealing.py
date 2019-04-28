@@ -1,5 +1,4 @@
 import math
-import initial_solution
 import random
 from copy import deepcopy
 from constants import INITIAL_TEMP, FINAL_TEMP, T_FACTOR, N_FACTOR, VERBOSE
@@ -87,11 +86,11 @@ def solution_cost(solution, nodes):
   return cost
 
 
-def annealing(nodes, capacity):
+def annealing(nodes, capacity, initial_solution_func):
   T = INITIAL_TEMP
   N = int(len(nodes)*N_FACTOR)
 
-  best = current = initial_solution.greedy(nodes, capacity, 'annealing')
+  best = current = initial_solution_func(nodes, capacity, 'annealing')
   cost_best = cost_current = solution_cost(current, nodes)
 
   while T > FINAL_TEMP:

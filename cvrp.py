@@ -31,7 +31,7 @@ def percent(a, b):
 
 def main():
   # get and handle different inputs
-  algorithm, initial_solution_algorithm, filepath, cli_capacity, times_to_run = parser.parse_cli_args()
+  algorithm, initial_solution_algorithm, filepath, cli_capacity, times_to_run, learn = parser.parse_cli_args()
   nodes, vrp_capacity = parser.parse_vrp(filepath)
   optimal_cost = parser.get_optimal_cost(filepath)
   capacity = cli_capacity if cli_capacity else vrp_capacity
@@ -86,7 +86,10 @@ def main():
   for i in range(times_to_run):
     # run algorithm
     start_time = process_time()
-    final_solution = alg_func(nodes, capacity, initial_solution_func)
+    if learn:
+      final_solution = alg_func(nodes, capacity, initial_solution = best_solution)
+    else:
+      final_solution = alg_func(nodes, capacity, initial_solution_func = initial_solution_func)
     end_time = process_time()
 
     # calculate time and cost

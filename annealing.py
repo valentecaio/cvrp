@@ -86,12 +86,16 @@ def solution_cost(solution, nodes):
   return cost
 
 
-def annealing(nodes, capacity, initial_solution_func):
+def annealing(nodes, capacity, initial_solution = None, initial_solution_func = None):
+  # use given initial solution or create one
+  if initial_solution == None:
+    initial_solution = initial_solution_func(nodes, capacity, 'annealing')
+
+  best = current = initial_solution
+  cost_best = cost_current = solution_cost(current, nodes)
+
   T = INITIAL_TEMP
   N = int(len(nodes)*N_FACTOR)
-
-  best = current = initial_solution_func(nodes, capacity, 'annealing')
-  cost_best = cost_current = solution_cost(current, nodes)
 
   while T > FINAL_TEMP:
     i = 0

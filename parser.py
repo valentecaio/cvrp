@@ -48,13 +48,16 @@ def parse_cli_args():
                       help='override truck capacity')
   parser.add_argument('-n', '--times-to-run', dest='times_to_run', type=int, default=1,
                       help='specify how many times the algorithm will be executed')
+  parser.add_argument('--learn', dest='learn', action='store_true',
+                      help='use best solution as initial solution in next instance')
 
   args = parser.parse_args()
   return  args.algorithm.pop(),\
           args.initial_solution_algorithm.pop(),\
           args.vrp_filepath.pop(),\
           args.capacity,\
-          args.times_to_run
+          args.times_to_run,\
+          args.learn
 
 
 # parse csv file and return optimal solution values

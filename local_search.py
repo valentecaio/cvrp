@@ -1,4 +1,3 @@
-import initial_solution
 from copy import deepcopy
 
 
@@ -77,9 +76,9 @@ def successor_inter_routes(in_solution, capacity, nodes):
 
   return in_solution #no new combination is better -> returns original
 
-def local_search(nodes, capacity):
+def local_search(nodes, capacity, initial_solution_func):
   LOOP_LIMIT = 1000
-  current = initial_solution.greedy(nodes, capacity)
+  current = initial_solution_func(nodes, capacity)
   while i < LOOP_LIMIT:
     i += 1
     neighbor1 = successor_inter_routes(current, capacity)

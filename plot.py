@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 from datetime import datetime
+from constants import VERBOSE
+from initial_solution_generator import format_from_local_search_to_annealing
 
 # save plot result as png in ./results/
 def save_plot():
@@ -12,7 +14,7 @@ def draw_line(x1, y1, x2, y2, color):
   y_values = [y1, y2]
 
   # plot the number in the list and set the line thickness.
-  plt.plot(x_values, y_values, linewidth=3, color=color)
+  plt.plot(x_values, y_values, linewidth=2, color=color)
 
 # draw client points based on their x, y axis values
 def draw_initial_state(nodes):
@@ -36,9 +38,12 @@ def draw_initial_state(nodes):
   save_plot()
   plt.show()
 
-def draw_solution(nodes, route, verbose = False):
+def draw_solution(nodes, solution, algorithm):
+  if algorithm == 'local_search':
+    solution = format_from_local_search_to_annealing(solution)
+
   # Set chart title.
-  plt.title("Final state", fontsize=19)
+  plt.title("Best solution", fontsize=19)
 
   depot = nodes[0]
   clients = nodes[1:]
@@ -54,18 +59,19 @@ def draw_solution(nodes, route, verbose = False):
   # draw depot
   plt.scatter(depot.x, depot.y, s=50, color='r')
 
-  # draw route lines
-  colors = ['b', 'g', 'r', 'c', 'm', 'y', 'b']
+  # draw solution lines
+  colors = ['b', 'r', 'c', 'm', 'y', 'b']
   p1 = depot
   truck_number = 0
-  for node_id in route:
+  for node_id in solution:
     color = colors[truck_number%len(colors)]
     p2 = nodes[node_id]
-    if verbose: print("nodes (%s, %s), color %s" % (p1.id, p2.id, color))
+    if VERBOSE: print("nodes (%s, %s), color %s" % (p1.id, p2.id, color))
     draw_line(p1.x, p1.y, p2.x, p2.y, color)
     p1 = p2
     if node_id == 0: truck_number += 1
 
+  save_plot()
   plt.show()
 
 

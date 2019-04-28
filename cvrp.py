@@ -3,11 +3,11 @@
 from pprint import pprint
 from time import process_time
 from constants import print_constants
-import initial_solution
+import initial_solution_generator
 import parser
-import simulated_annealing
+import annealing
 import local_search
-# import plot
+import plot
 
 ### DEBUG FUNCTIONS ###
 
@@ -34,17 +34,17 @@ def main():
 
   # select algorithm
   if algorithm == "annealing":
-    cost_func = simulated_annealing.solution_cost
-    alg_func = simulated_annealing.simulated_annealing
+    cost_func = annealing.solution_cost
+    alg_func = annealing.annealing
   elif algorithm == "local_search":
     cost_func = local_search.solution_cost
     alg_func = local_search.local_search
 
   # select initial solution algorithm
   if initial_solution_algorithm == "greedy":
-    initial_solution_func = initial_solution.greedy
+    initial_solution_func = initial_solution_generator.greedy
   elif initial_solution_algorithm == "naive":
-    initial_solution_func = initial_solution.naive
+    initial_solution_func = initial_solution_generator.naive
 
   print("\n\n############## INPUT ##############\n\n")
 
@@ -60,16 +60,10 @@ def main():
 
   print("\n\n############## INITIAL SOLUTION ##############\n\n")
 
-  solution = initial_solution.naive(nodes, capacity, algorithm)
-  initial_cost = cost_func(solution, nodes)
-  print("Naive initial solution: %s" % solution)
-  print("Naive initial solution cost: %s" % initial_cost)
-
-
   # generate initial solution
-  solution = initial_solution_func(nodes, capacity, algorithm)
-  initial_cost = cost_func(solution, nodes)
-  print("Initial solution: %s" % solution)
+  initial_solution = initial_solution_func(nodes, capacity, algorithm)
+  initial_cost = cost_func(initial_solution, nodes)
+  print("Initial solution: %s" % initial_solution)
   print("Initial solution cost: %s" % initial_cost)
 
 
@@ -80,10 +74,11 @@ def main():
   cost_acc = 0
   min_cost = 99999999999999999
   max_cost = 0
+  best_solution = initial_solution
   for i in range(times_to_run):
     # run algorithm
     start_time = process_time()
-    final_solution = alg_func(nodes, capacity)
+    final_solution = alg_func(nodes, capacity, initial_solution_func)
     end_time = process_time()
 
     # calculate time and cost
@@ -92,7 +87,9 @@ def main():
     cost_diff_optimal = percent(final_cost, optimal_cost)
     cost_diff_initial = percent(initial_cost, final_cost)
 
-    # accumulate time and cost for statistics
+    # accumulate data for statistics
+    if final_cost < min_cost:
+      best_solution = final_solution
     time_acc += time_diff
     cost_acc += final_cost
     max_cost = max(max_cost, final_cost)
@@ -112,11 +109,12 @@ def main():
   average_time = time_acc / times_to_run
 
   print("The algorithm %s ran for %s times !\n" % (algorithm, times_to_run))
+  print("Total execution time: %.3f seconds" % time_acc)
   print("Average execution time: %.3f seconds" % average_time)
   print("Optimal solution cost: %s" % optimal_cost)
   print("Initial solution cost: %s" % initial_cost)
   
-  for (analysis, cost) in [("average", average_cost), ("best", min_cost), ("worst", max_cost)]:
+  for (analysis, cost) in [("average", average_cost), ("worst", max_cost), ("best", min_cost)]:
     cost_diff_optimal = percent(cost, optimal_cost)
     cost_diff_initial = percent(initial_cost, cost)
 
@@ -125,8 +123,10 @@ def main():
     print("The %s solution costs %.2f percent MORE than the OPTIMAL solution" % (analysis, cost_diff_optimal) )
     print("The %s solution costs %.2f percent LESS than the INITIAL solution" % (analysis, cost_diff_initial) )
 
+  print("\nBest solution: %s" % best_solution)
+
   print("\n\n")
-  # plot.draw_solution(nodes, solution)
+  plot.draw_solution(nodes, best_solution, algorithm)
 
 
 if __name__ == "__main__":

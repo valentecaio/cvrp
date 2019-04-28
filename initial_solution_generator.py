@@ -178,3 +178,10 @@ def format_to_annealing(solution):
   for route in solution:
     solution_as_list += route.path[1:]
   return solution_as_list
+
+
+def format_from_local_search_to_annealing(solution):
+  for route in solution:
+    # add zeros
+    route.path = [0] + route.path + [0]
+  return format_to_annealing(solution)

@@ -7,8 +7,8 @@ import initial_solution_generator
 import parser
 import annealing
 import local_search
-if PLOT:
-  import plot
+# if PLOT:
+#   import plot
 
 ### DEBUG FUNCTIONS ###
 

@@ -24,7 +24,7 @@ def cost(solution, routes, nodes):
   #sum the cost of all solutions again
   return solution_cost(solution)
 
-def solution_cost(solution):
+def solution_cost(solution, _nodes = None):
   return sum(route.cost for route in solution)
 
 def flip(route, nodes):
@@ -60,11 +60,11 @@ def move(solution, r1, r2, i, j):
   return new
 
 def successor_inter_routes(in_solution, capacity, nodes):
-  costIn = cost_solution(in_solution)
-  for r1 in range(0, in_solution):
-    for r2 in range(r1+1, in_solution):
-      for i in range(0, len(in_solution[r1])):
-        for j in range(i+1, len(in_solution[r2])):
+  costIn = solution_cost(in_solution)
+  for r1 in range(0, len(in_solution)):
+    for r2 in range(r1+1, len(in_solution)):
+      for i in range(0, len(in_solution[r1].path)):
+        for j in range(i+1, len(in_solution[r2].path)):
           #create new neighbor with move transformation
           neighbor = move(neighbor, r1, r2, i, j)
           
@@ -79,9 +79,10 @@ def successor_inter_routes(in_solution, capacity, nodes):
 def local_search(nodes, capacity, initial_solution_func):
   LOOP_LIMIT = 1000
   current = initial_solution_func(nodes, capacity)
+  i = 0
   while i < LOOP_LIMIT:
     i += 1
-    neighbor1 = successor_inter_routes(current, capacity)
+    neighbor1 = successor_inter_routes(current, capacity, nodes)
     neighbor2 = successor_intra_routes(current)
     #pick the best neighbor
     neighbor = neighbor1 if neighbor1 < neighbor2 else neighbor2

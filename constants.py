@@ -3,6 +3,7 @@ from pprint import pprint
 #### DEBUG CONSTANTS ####
 
 VERBOSE = False     # enable logs
+PLOT = True         # enable plot
 
 #### ANNEALING CONSTANTS ####
 

@@ -2,12 +2,13 @@
 
 from pprint import pprint
 from time import process_time
-from constants import print_constants
+from constants import print_constants, PLOT
 import initial_solution_generator
 import parser
 import annealing
 import local_search
-import plot
+if PLOT:
+  import plot
 
 ### DEBUG FUNCTIONS ###
 
@@ -126,7 +127,8 @@ def main():
   print("\nBest solution: %s" % best_solution)
 
   print("\n\n")
-  plot.draw_solution(nodes, best_solution, algorithm)
+  if PLOT:
+    plot.draw_solution(nodes, best_solution, algorithm)
 
 
 if __name__ == "__main__":

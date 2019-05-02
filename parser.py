@@ -76,3 +76,21 @@ def get_optimal_cost(vrp_filepath):
   vrp_filename = vrp_filepath[bar_index+1:]
   return int(parse_optimal_solutions()[vrp_filename])
 
+
+def to_csv(r):
+  return "%s;%s;%s;%s;%s;%s;%s\n" % (r["initial_temp"], r["t_factor"], r["n_factor"], r["cost"], r["execution time"], r["diff to optimal"], r["diff to initial"])
+
+
+def write_csv(filepath, optimal_cost, best, average, all_results):
+  header = "initial_temp;t_factor;n_factor;cost;execution time;diff to optimal;diff to initial\n"
+  s = "file:;%s;;optimal cost:;%s" %(filepath, optimal_cost) + "\n\n"
+  s += "BEST\n\n" + header + to_csv(best) + "\n\n"
+  s += "AVERAGE\n\n" + header + to_csv(average) + "\n\n"
+  s += "ALL BEST RESULTS\n\n" + header
+  for r in all_results:
+    s += to_csv(r["best"])
+  s += "\n\nALL AVERAGE RESULTS\n\n" + header
+  for r in all_results:
+    s += to_csv(r["average"])
+  f = open("results_%s.csv" % filepath.replace("/", "-"),"w+")
+  f.write(s)

@@ -86,7 +86,7 @@ def solution_cost(solution, nodes):
   return cost
 
 
-def annealing(nodes, capacity, initial_solution = None, initial_solution_func = None):
+def annealing(nodes, capacity, init_t = INITIAL_TEMP, t_factor = T_FACTOR, n_factor = N_FACTOR, initial_solution = None, initial_solution_func = None):
   # use given initial solution or create one
   if initial_solution == None:
     initial_solution = initial_solution_func(nodes, capacity, 'annealing')
@@ -94,8 +94,8 @@ def annealing(nodes, capacity, initial_solution = None, initial_solution_func = 
   best = current = initial_solution
   cost_best = cost_current = solution_cost(current, nodes)
 
-  T = INITIAL_TEMP
-  N = int(len(nodes)*N_FACTOR)
+  T = init_t
+  N = int(len(nodes)*n_factor)
 
   while T > FINAL_TEMP:
     i = 0
@@ -125,6 +125,6 @@ def annealing(nodes, capacity, initial_solution = None, initial_solution_func = 
 
       i += 1
     #decreases temperature
-    T *= T_FACTOR
+    T *= t_factor
   return best
 

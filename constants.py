@@ -9,7 +9,7 @@ PLOT = True         # enable plot
 
 INITIAL_TEMP = 20
 FINAL_TEMP = 1      # stop condition
-T_FACTOR = 0.9      # decreasing temperature by (1 - T_FACTOR)
+T_FACTOR = 0.95      # decreasing temperature by (1 - T_FACTOR)
 N_FACTOR = 0.9      # neighborhood ratio factor
 
 #### LOCAL SEARCH CONSTANTS ####

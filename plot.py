@@ -72,7 +72,7 @@ def draw_solution(nodes, solution, algorithm):
     if node_id == 0: truck_number += 1
 
   save_plot()
-  plt.show()
+  #plt.show()
 
 
 if __name__ == "__main__":
